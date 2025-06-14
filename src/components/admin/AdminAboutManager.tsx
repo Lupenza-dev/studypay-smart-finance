@@ -89,7 +89,7 @@ const AdminAboutManager = () => {
 
   const { toast } = useToast();
 
-  const handleSectionUpdate = (id: string, field: keyof AboutSection, value: string | boolean) => {
+  const handleSectionUpdate = (id: string, field: keyof AboutSection, value: string | boolean | number) => {
     setAboutSections(aboutSections.map(section =>
       section.id === id ? { ...section, [field]: value } : section
     ));
