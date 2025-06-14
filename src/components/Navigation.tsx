@@ -27,9 +27,9 @@ const Navigation = () => {
             <button onClick={() => handleNavigation('/')} className="text-gray-700 hover:text-purple-600 transition-colors font-medium">Home</button>
             <button onClick={() => handleNavigation('/about')} className="text-gray-700 hover:text-purple-600 transition-colors font-medium">About Us</button>
             <button onClick={() => handleNavigation('/services')} className="text-gray-700 hover:text-purple-600 transition-colors font-medium">Services</button>
-            <a href="#news" className="text-gray-700 hover:text-purple-600 transition-colors font-medium">News</a>
-            <a href="#faq" className="text-gray-700 hover:text-purple-600 transition-colors font-medium">FAQ</a>
-            <a href="#contact" className="text-gray-700 hover:text-purple-600 transition-colors font-medium">Contact Us</a>
+            <button onClick={() => handleNavigation('/news')} className="text-gray-700 hover:text-purple-600 transition-colors font-medium">News</button>
+            <button onClick={() => handleNavigation('/faq')} className="text-gray-700 hover:text-purple-600 transition-colors font-medium">FAQ</button>
+            <button onClick={() => handleNavigation('/contact')} className="text-gray-700 hover:text-purple-600 transition-colors font-medium">Contact Us</button>
           </nav>
 
           <Button className="hidden md:block bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
@@ -54,9 +54,9 @@ const Navigation = () => {
               <button onClick={() => handleNavigation('/')} className="text-gray-700 hover:text-purple-600 transition-colors text-left">Home</button>
               <button onClick={() => handleNavigation('/about')} className="text-gray-700 hover:text-purple-600 transition-colors text-left">About Us</button>
               <button onClick={() => handleNavigation('/services')} className="text-gray-700 hover:text-purple-600 transition-colors text-left">Services</button>
-              <a href="#news" className="text-gray-700 hover:text-purple-600 transition-colors">News</a>
-              <a href="#faq" className="text-gray-700 hover:text-purple-600 transition-colors">FAQ</a>
-              <a href="#contact" className="text-gray-700 hover:text-purple-600 transition-colors">Contact Us</a>
+              <button onClick={() => handleNavigation('/news')} className="text-gray-700 hover:text-purple-600 transition-colors text-left">News</button>
+              <button onClick={() => handleNavigation('/faq')} className="text-gray-700 hover:text-purple-600 transition-colors text-left">FAQ</button>
+              <button onClick={() => handleNavigation('/contact')} className="text-gray-700 hover:text-purple-600 transition-colors text-left">Contact Us</button>
               <Button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 w-full">
                 Get Started
               </Button>
