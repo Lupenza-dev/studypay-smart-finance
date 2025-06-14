@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import TopHeader from '../components/TopHeader';
 import Navigation from '../components/Navigation';
@@ -57,13 +56,13 @@ const News = () => {
       <TopHeader />
       <Navigation />
       
-      <div className="pt-32 pb-20 bg-gradient-to-br from-purple-50 to-blue-50">
+      <div className="pt-36 sm:pt-32 pb-20 bg-gradient-to-br from-purple-50 to-blue-50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4">
               Latest News & Updates
             </h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto">
               Stay informed about the latest developments, success stories, and updates from StudyEase
             </p>
           </div>
