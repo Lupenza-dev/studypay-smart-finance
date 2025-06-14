@@ -7,8 +7,9 @@ import {
   Users, 
   Settings, 
   LogOut,
-  ChevronLeft,
-  ChevronRight
+  Star,
+  HelpCircle,
+  Info
 } from 'lucide-react';
 
 interface AdminSidebarProps {
@@ -24,6 +25,9 @@ const AdminSidebar = ({ isOpen, activeTab, setActiveTab, onLogout }: AdminSideba
     { id: 'news', label: 'News', icon: FileText },
     { id: 'services', label: 'Services', icon: Globe },
     { id: 'users', label: 'Users', icon: Users },
+    { id: 'testimonials', label: 'Testimonials', icon: Star },
+    { id: 'faq', label: 'FAQ', icon: HelpCircle },
+    { id: 'about', label: 'About Us', icon: Info },
     { id: 'settings', label: 'Settings', icon: Settings },
   ];
 

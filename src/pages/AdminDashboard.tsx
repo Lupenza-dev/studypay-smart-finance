@@ -14,7 +14,10 @@ import {
   BarChart3,
   MessageSquare,
   Calendar,
-  Globe
+  Globe,
+  HelpCircle,
+  Star,
+  Info
 } from 'lucide-react';
 import AdminSidebar from '../components/admin/AdminSidebar';
 import AdminHeader from '../components/admin/AdminHeader';
@@ -22,6 +25,9 @@ import AdminStats from '../components/admin/AdminStats';
 import AdminNewsManager from '../components/admin/AdminNewsManager';
 import AdminServicesManager from '../components/admin/AdminServicesManager';
 import AdminUsersManager from '../components/admin/AdminUsersManager';
+import AdminTestimonialsManager from '../components/admin/AdminTestimonialsManager';
+import AdminFAQManager from '../components/admin/AdminFAQManager';
+import AdminAboutManager from '../components/admin/AdminAboutManager';
 import AdminSettingsManager from '../components/admin/AdminSettingsManager';
 
 const AdminDashboard = () => {
@@ -147,6 +153,18 @@ const AdminDashboard = () => {
             
             <TabsContent value="users">
               <AdminUsersManager />
+            </TabsContent>
+
+            <TabsContent value="testimonials">
+              <AdminTestimonialsManager />
+            </TabsContent>
+
+            <TabsContent value="faq">
+              <AdminFAQManager />
+            </TabsContent>
+
+            <TabsContent value="about">
+              <AdminAboutManager />
             </TabsContent>
             
             <TabsContent value="settings">
