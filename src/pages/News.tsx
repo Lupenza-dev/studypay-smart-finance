@@ -6,9 +6,11 @@ import Footer from '../components/Footer';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useNavigate } from 'react-router-dom';
 
 const News = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const navigate = useNavigate();
 
   const newsArticles = [
     {
@@ -78,8 +80,11 @@ const News = () => {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredArticles.map((article) => (
-              <Card key={article.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                <div className="aspect-video overflow-hidden">
+              <Card key={article.id} className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
+                <div 
+                  className="aspect-video overflow-hidden"
+                  onClick={() => navigate(`/news/${article.id}`)}
+                >
                   <img 
                     src={article.image} 
                     alt={article.title}
@@ -99,7 +104,11 @@ const News = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Button variant="outline" className="w-full">
+                  <Button 
+                    variant="outline" 
+                    className="w-full"
+                    onClick={() => navigate(`/news/${article.id}`)}
+                  >
                     Read More
                   </Button>
                 </CardContent>

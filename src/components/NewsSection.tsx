@@ -1,8 +1,11 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 const NewsSection = () => {
+  const navigate = useNavigate();
+
   const latestNews = [
     {
       id: 1,
@@ -44,8 +47,11 @@ const NewsSection = () => {
 
         <div className="grid md:grid-cols-3 gap-8">
           {latestNews.map((article) => (
-            <Card key={article.id} className="overflow-hidden hover:shadow-lg transition-shadow bg-white">
-              <div className="aspect-video overflow-hidden">
+            <Card key={article.id} className="overflow-hidden hover:shadow-lg transition-shadow bg-white cursor-pointer">
+              <div 
+                className="aspect-video overflow-hidden"
+                onClick={() => navigate(`/news/${article.id}`)}
+              >
                 <img 
                   src={article.image} 
                   alt={article.title}
@@ -65,7 +71,11 @@ const NewsSection = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <Button variant="outline" className="w-full">
+                <Button 
+                  variant="outline" 
+                  className="w-full"
+                  onClick={() => navigate(`/news/${article.id}`)}
+                >
                   Read More
                 </Button>
               </CardContent>
@@ -78,6 +88,7 @@ const NewsSection = () => {
             size="lg" 
             variant="outline" 
             className="border-purple-600 text-purple-600 hover:bg-purple-600 hover:text-white"
+            onClick={() => navigate('/news')}
           >
             View All News
           </Button>
