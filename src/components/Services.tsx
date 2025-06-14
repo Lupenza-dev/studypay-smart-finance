@@ -2,32 +2,39 @@
 import { Book, GraduationCap, Laptop, Calculator } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 const Services = () => {
+  const navigate = useNavigate();
+
   const services = [
     {
       icon: Book,
       title: "Textbook Financing",
       description: "Split your textbook costs over the semester. Pay in 3-4 installments instead of all at once.",
-      features: ["No interest for 4 months", "Digital and physical books", "Instant approval"]
+      features: ["No interest for 4 months", "Digital and physical books", "Instant approval"],
+      route: "/services/textbook-financing"
     },
     {
       icon: GraduationCap,
       title: "Tuition Payment Plans",
       description: "Flexible tuition payment options that work with your financial aid and family budget.",
-      features: ["Monthly payment plans", "Semester-based schedules", "Financial aid integration"]
+      features: ["Monthly payment plans", "Semester-based schedules", "Financial aid integration"],
+      route: "/services"
     },
     {
       icon: Laptop,
       title: "Equipment Loans",
       description: "Get the technology you need for your studies with affordable payment plans.",
-      features: ["Laptops & tablets", "Software subscriptions", "Lab equipment"]
+      features: ["Laptops & tablets", "Software subscriptions", "Lab equipment"],
+      route: "/services"
     },
     {
       icon: Calculator,
       title: "Course Fee Management",
       description: "Manage lab fees, project costs, and other course-related expenses with ease.",
-      features: ["Lab fee splitting", "Project funding", "Study abroad support"]
+      features: ["Lab fee splitting", "Project funding", "Study abroad support"],
+      route: "/services"
     }
   ];
 
@@ -64,7 +71,10 @@ const Services = () => {
                     </li>
                   ))}
                 </ul>
-                <Button className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
+                <Button 
+                  className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+                  onClick={() => navigate(service.route)}
+                >
                   Learn More
                 </Button>
               </CardContent>

@@ -1,22 +1,32 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const handleNavigation = (path: string) => {
+    navigate(path);
+    setIsMenuOpen(false);
+  };
 
   return (
     <div className="bg-white shadow-md fixed w-full top-10 z-40">
       <div className="container mx-auto px-4 py-4">
         <div className="flex justify-between items-center">
-          <div className="text-2xl font-bold text-purple-600">
+          <div 
+            className="text-2xl font-bold text-purple-600 cursor-pointer"
+            onClick={() => handleNavigation('/')}
+          >
             StudyEase
           </div>
           
           <nav className="hidden md:flex space-x-8">
-            <a href="#home" className="text-gray-700 hover:text-purple-600 transition-colors font-medium">Home</a>
-            <a href="#about" className="text-gray-700 hover:text-purple-600 transition-colors font-medium">About Us</a>
-            <a href="#services" className="text-gray-700 hover:text-purple-600 transition-colors font-medium">Services</a>
+            <button onClick={() => handleNavigation('/')} className="text-gray-700 hover:text-purple-600 transition-colors font-medium">Home</button>
+            <button onClick={() => handleNavigation('/about')} className="text-gray-700 hover:text-purple-600 transition-colors font-medium">About Us</button>
+            <button onClick={() => handleNavigation('/services')} className="text-gray-700 hover:text-purple-600 transition-colors font-medium">Services</button>
             <a href="#news" className="text-gray-700 hover:text-purple-600 transition-colors font-medium">News</a>
             <a href="#faq" className="text-gray-700 hover:text-purple-600 transition-colors font-medium">FAQ</a>
             <a href="#contact" className="text-gray-700 hover:text-purple-600 transition-colors font-medium">Contact Us</a>
@@ -41,9 +51,9 @@ const Navigation = () => {
         {isMenuOpen && (
           <div className="md:hidden mt-4 pb-4">
             <div className="flex flex-col space-y-4">
-              <a href="#home" className="text-gray-700 hover:text-purple-600 transition-colors">Home</a>
-              <a href="#about" className="text-gray-700 hover:text-purple-600 transition-colors">About Us</a>
-              <a href="#services" className="text-gray-700 hover:text-purple-600 transition-colors">Services</a>
+              <button onClick={() => handleNavigation('/')} className="text-gray-700 hover:text-purple-600 transition-colors text-left">Home</button>
+              <button onClick={() => handleNavigation('/about')} className="text-gray-700 hover:text-purple-600 transition-colors text-left">About Us</button>
+              <button onClick={() => handleNavigation('/services')} className="text-gray-700 hover:text-purple-600 transition-colors text-left">Services</button>
               <a href="#news" className="text-gray-700 hover:text-purple-600 transition-colors">News</a>
               <a href="#faq" className="text-gray-700 hover:text-purple-600 transition-colors">FAQ</a>
               <a href="#contact" className="text-gray-700 hover:text-purple-600 transition-colors">Contact Us</a>
