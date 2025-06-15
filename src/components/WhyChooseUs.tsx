@@ -5,29 +5,29 @@ const WhyChooseUs = () => {
   const benefits = [
     {
       icon: Shield,
-      title: "No Hidden Fees",
-      description: "Complete transparency in pricing. What you see is what you pay, with no surprise charges.",
+      title: "Tailored Solutions for Students’ Unique Needs",
+      description: "El-dizer Financial Service stands out by offering innovative financial solutions specifically designed for students. Our services, including emergency loans, intern student loans, and access to learning devices with flexible payment options, address the unique financial challenges faced by students in Tanzania. We understand their needs and provide timely support to ensure their academic journey remains uninterrupted.",
       stat: "0%",
       statLabel: "Hidden Fees"
     },
     {
       icon: Heart,
-      title: "Student-Friendly Terms",
-      description: "We understand student budgets and create payment plans that work with your lifestyle.",
+      title: "Quick Access to Funds and Essential Resources",
+      description: "Unlike traditional financial institutions that may take months to process loans, El-dizer provides swift access to emergency funds, essential learning devices, and internship support. Our digital wallet and Chuo Credit App streamline financial management and promote financial literacy, helping students handle unexpected expenses and academic requirements efficiently",
       stat: "24/7",
       statLabel: "Student Support"
     },
     {
       icon: Zap,
-      title: "Quick Approval",
-      description: "Get approved in minutes, not days. Our streamlined process gets you what you need fast.",
+      title: "Significant Impact on Students’ Lives",
+      description: "Since our inception, El-dizer has disbursed over TZS 180,453,000 to more than 1,244 students, facilitating their access to critical resources and financial stability. This support has empowered students to manage emergencies, secure internships, and acquire necessary learning tools, thereby significantly contributing to their academic success and well-being",
       stat: "2 min",
       statLabel: "Average Approval"
     },
     {
       icon: Calendar,
-      title: "Academic Calendar Aligned",
-      description: "Payment schedules that sync with semesters, breaks, and your financial aid disbursements.",
+      title: "Strategic Partnerships with Leading Institutions",
+      description: "Our collaborations with esteemed financial institutions like NMB Bank and universities in Dodoma enhance the reliability and reach of our services. These partnerships ensure secure and efficient loan repayments and position us well for future growth, enabling us to extend our services to more institutions across Tanzania",
       stat: "100%",
       statLabel: "Flexible Schedules"
     }
@@ -38,10 +38,10 @@ const WhyChooseUs = () => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold mb-4">
-            Why 50,000+ Students Choose StudyEase
+            Why Students Choose Eldizer Financial Services
           </h2>
           <p className="text-xl text-blue-100 max-w-3xl mx-auto">
-            We're more than just a payment service - we're your partner in educational success.
+            We're more than just a Financial service - we're your partner in educational success.
           </p>
         </div>
 
@@ -54,10 +54,6 @@ const WhyChooseUs = () => {
                 </div>
                 <h3 className="text-xl font-bold mb-4">{benefit.title}</h3>
                 <p className="text-blue-100 mb-6 leading-relaxed">{benefit.description}</p>
-                <div className="border-t border-white/20 pt-4">
-                  <div className="text-3xl font-bold text-yellow-300">{benefit.stat}</div>
-                  <div className="text-sm text-blue-200">{benefit.statLabel}</div>
-                </div>
               </div>
             </div>
           ))}

@@ -9,14 +9,14 @@ const Testimonials = () => {
       university: "UC Berkeley",
       image: "https://images.unsplash.com/photo-1494790108755-2616b612b786?auto=format&fit=crop&w=150&q=80",
       rating: 5,
-      text: "StudyEase made it possible for me to get my textbooks at the start of the semester without waiting for my financial aid. The payment plan was so flexible!"
+      text: "Eldizer-Finance made it possible for me to get my textbooks at the start of the semester without waiting for my financial aid. The payment plan was so flexible!"
     },
     {
       name: "Marcus Chen",
       university: "MIT",
       image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80",
       rating: 5,
-      text: "I needed a new laptop for my computer science program. StudyEase's equipment loan program let me get what I needed and pay over the semester."
+      text: "I needed a new laptop for my computer science program. Eldizer-Finance's equipment loan program let me get what I needed and pay over the semester."
     },
     {
       name: "Emily Rodriguez",
@@ -35,7 +35,7 @@ const Testimonials = () => {
             What Students Are Saying
           </h2>
           <p className="text-xl text-gray-600">
-            Real stories from students who've succeeded with StudyEase
+            Real stories from students who've succeeded with Eldizer-Finance
           </p>
         </div>
 

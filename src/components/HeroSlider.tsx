@@ -53,7 +53,7 @@ const HeroSlider = () => {
   };
 
   return (
-    <section id="home" className="relative bg-gradient-to-br from-purple-600 via-blue-600 to-indigo-700 text-white pt-32 pb-20 overflow-hidden">
+    <section id="home" className="relative bg-gradient-to-br from-[#272f3b] to-[#272f3b] text-white pt-32 pb-20 overflow-hidden">
       <div className="container mx-auto px-4 relative z-10">
         <div className="grid md:grid-cols-2 gap-12 items-center min-h-[500px]">
           <div className="space-y-8">
@@ -62,7 +62,7 @@ const HeroSlider = () => {
                 <span className="block transition-all duration-500">
                   {slides[currentSlide].title}
                 </span>
-                <span className="block text-yellow-300 transition-all duration-500">
+                <span className="block text-[#df412d] transition-all duration-500">
                   {slides[currentSlide].subtitle}
                 </span>
               </h1>
@@ -72,12 +72,12 @@ const HeroSlider = () => {
             </div>
             
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button size="lg" className="bg-yellow-400 text-purple-900 hover:bg-yellow-300 font-semibold px-8 py-6 text-lg">
-                Apply Now - It's Free!
+              <Button size="lg" className="bg-[#df412d] text-white hover:bg-[#262E3A] font-semibold px-8 py-6 text-lg">
+                Get Started
               </Button>
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-purple-600 px-8 py-6 text-lg">
+              {/* <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-purple-600 px-8 py-6 text-lg">
                 Learn More
-              </Button>
+              </Button> */}
             </div>
             
             <div className="flex items-center space-x-8 text-sm">

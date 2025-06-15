@@ -14,7 +14,7 @@ const FAQ = () => {
     {
       id: 1,
       category: "Getting Started",
-      question: "How do I apply for StudyEase payment plans?",
+      question: "How do I apply for Eldizer Finance payment plans?",
       answer: "Applying is simple! Click the 'Apply Now' button, fill out our quick application form, and you'll receive approval status within minutes. No lengthy paperwork or complex procedures required."
     },
     {
@@ -38,7 +38,7 @@ const FAQ = () => {
     {
       id: 5,
       category: "Eligibility",
-      question: "Who is eligible for StudyEase payment plans?",
+      question: "Who is eligible for Eldizer Finance payment plans?",
       answer: "Current students enrolled in accredited institutions are eligible. We welcome undergraduate, graduate, and professional students. International students may also qualify with additional documentation."
     },
     {

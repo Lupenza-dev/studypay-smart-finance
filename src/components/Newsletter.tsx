@@ -8,11 +8,8 @@ const Newsletter = () => {
       <div className="container mx-auto px-4 text-center">
         <div className="max-w-2xl mx-auto">
           <h2 className="text-3xl font-bold mb-4">
-            Stay Smart About Student Finances
+            Stay Smart About Student Financial Service
           </h2>
-          <p className="text-xl text-indigo-100 mb-8">
-            Get exclusive budgeting tips, scholarship alerts, and special offers delivered to your inbox.
-          </p>
           <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
             <Input
               type="email"
@@ -24,7 +21,7 @@ const Newsletter = () => {
             </Button>
           </div>
           <p className="text-sm text-indigo-200 mt-4">
-            Join 10,000+ students already subscribed. Unsubscribe anytime.
+            Join students already subscribed. Unsubscribe anytime.
           </p>
         </div>
       </div>

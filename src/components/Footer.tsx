@@ -7,15 +7,15 @@ const Footer = () => {
       <div className="container mx-auto px-4">
         <div className="grid md:grid-cols-4 gap-8 mb-8">
           <div className="space-y-4">
-            <h3 className="text-2xl font-bold text-purple-400">StudyEase</h3>
+            <h3 className="text-2xl font-bold text-[#df412d]">Eldizer Finance</h3>
             <p className="text-gray-300 leading-relaxed">
-              Empowering students with flexible payment solutions that make education more accessible and affordable.
+            El-dizer financial service is only financial service (fintech) in Tanzania that serves scholar from different higher learning institution as well as public servant.
             </p>
             <div className="flex space-x-4">
-              <div className="bg-purple-600 p-2 rounded-full hover:bg-purple-700 transition-colors">
+              <div className="bg-[#df412d] p-2 rounded-full hover:bg-[#df412d] transition-colors">
                 <Facebook size={20} />
               </div>
-              <div className="bg-purple-600 p-2 rounded-full hover:bg-purple-700 transition-colors">
+              <div className="bg-[#df412d] p-2 rounded-full hover:bg-[#df412d] transition-colors">
                 <Instagram size={20} />
               </div>
             </div>
@@ -45,15 +45,15 @@ const Footer = () => {
             <h4 className="text-lg font-semibold mb-4">Contact Info</h4>
             <div className="space-y-3">
               <div className="flex items-center space-x-3">
-                <Mail size={16} className="text-purple-400" />
-                <span className="text-gray-300">support@studyease.com</span>
+                <Mail size={16} className="text-[#df412d]" />
+                <span className="text-gray-300">info@eldizerfinance.co.tz</span>
               </div>
               <div className="flex items-center space-x-3">
-                <MapPin size={16} className="text-purple-400" />
-                <span className="text-gray-300">123 University Ave, Campus City</span>
+                <MapPin size={16} className="text-[#df412d]" />
+                <span className="text-gray-300">Dodoma City</span>
               </div>
               <div className="flex items-center space-x-3">
-                <Clock size={16} className="text-purple-400" />
+                <Clock size={16} className="text-[#df412d]" />
                 <span className="text-gray-300">Mon-Fri 9AM-6PM</span>
               </div>
             </div>
@@ -63,12 +63,12 @@ const Footer = () => {
         <div className="border-t border-gray-800 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-400 text-sm">
-              © 2024 StudyEase. All rights reserved.
+              © 2025 Eldizer-Finance. All rights reserved.
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
               <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">Privacy Policy</a>
               <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">Terms of Service</a>
-              <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">Responsible Lending</a>
+              {/* <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">Responsible Lending</a> */}
             </div>
           </div>
         </div>

@@ -99,7 +99,7 @@ const ContactUs = () => {
                           type="tel"
                           value={formData.phone}
                           onChange={handleInputChange}
-                          placeholder="(555) 123-4567"
+                          placeholder="+255 787 971 971"
                         />
                       </div>
                       <div>
@@ -149,36 +149,36 @@ const ContactUs = () => {
                 <CardContent className="space-y-4">
                   <div>
                     <h4 className="font-semibold text-gray-900">Email</h4>
-                    <p className="text-gray-600">support@studyease.com</p>
+                    <p className="text-gray-600">info@eldizerfinance.co.tz</p>
                   </div>
                   <div>
                     <h4 className="font-semibold text-gray-900">Phone</h4>
-                    <p className="text-gray-600">1-800-STUDY-EASE</p>
+                    <p className="text-gray-600">+255 787 971 971E</p>
                   </div>
                   <div>
                     <h4 className="font-semibold text-gray-900">Office Hours</h4>
                     <p className="text-gray-600">
-                      Monday - Friday: 8:00 AM - 8:00 PM EST<br />
-                      Saturday: 9:00 AM - 5:00 PM EST<br />
+                      Monday - Friday: 8:00 AM - 6:00 PM<br />
+                      Saturday: 8:00 AM - 1:00 PM<br />
                       Sunday: Closed
                     </p>
                   </div>
                 </CardContent>
               </Card>
 
-              <Card>
+              {/* <Card>
                 <CardHeader>
                   <CardTitle>Emergency Support</CardTitle>
                 </CardHeader>
-                <CardContent>
+                {/* <CardContent>
                   <p className="text-gray-600 mb-4">
                     Need immediate assistance with your account or payments?
                   </p>
                   <Button variant="outline" className="w-full">
                     Emergency Help Line
                   </Button>
-                </CardContent>
-              </Card>
+                </CardContent> 
+              {/* </Card> */}
             </div>
           </div>
         </div>

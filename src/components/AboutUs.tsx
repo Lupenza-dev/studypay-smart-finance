@@ -11,27 +11,27 @@ const AboutUs = () => {
               We Understand Student Life
             </h2>
             <p className="text-lg text-gray-600 leading-relaxed">
-              At StudyEase, we recognize that education costs can be overwhelming. That's why we've created flexible payment solutions that work with your student lifestyle, not against it.
+            El-dizer financial service is only financial service (fintech) in Tanzania that serves scholar from different higher learning institution as well as public servant to get access over a number of credit facilities so that they can simplify their day to day demands and wants through digital platform such as application, website and social media
             </p>
             <p className="text-lg text-gray-600 leading-relaxed">
-              Our mission is to remove financial barriers from education by providing transparent, student-friendly payment options that let you focus on what matters most - your studies.
+              Our mission is to To walk along with scholars and public servant in day to day manner, providing services that enrich their livelihood
             </p>
             <div className="space-y-4">
               <div className="flex items-center space-x-3">
                 <CheckCircle className="text-green-500" size={24} />
-                <span className="text-gray-700">Transparent pricing with no surprises</span>
+                <span className="text-gray-700">Tailored Solutions for Students’ Unique Needs</span>
               </div>
               <div className="flex items-center space-x-3">
                 <CheckCircle className="text-green-500" size={24} />
-                <span className="text-gray-700">Payment schedules aligned with academic calendar</span>
+                <span className="text-gray-700">Quick Access to Funds and Essential Resources</span>
               </div>
               <div className="flex items-center space-x-3">
                 <CheckCircle className="text-green-500" size={24} />
-                <span className="text-gray-700">Dedicated student support team</span>
+                <span className="text-gray-700">Significant Impact on Students’ Lives</span>
               </div>
               <div className="flex items-center space-x-3">
                 <CheckCircle className="text-green-500" size={24} />
-                <span className="text-gray-700">Partnerships with 500+ educational institutions</span>
+                <span className="text-gray-700">Strategic Partnerships with Leading Institutions</span>
               </div>
             </div>
           </div>

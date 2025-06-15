@@ -20,7 +20,11 @@ const Navigation = () => {
             className="text-xl sm:text-2xl font-bold text-purple-600 cursor-pointer"
             onClick={() => handleNavigation('/')}
           >
-            StudyEase
+            <img 
+              src="/logo.png" 
+              alt="StudyEase Logo" 
+              className="h-12 w-auto" 
+            />
           </div>
           
           <nav className="hidden md:flex space-x-8">

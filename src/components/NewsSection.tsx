@@ -41,7 +41,7 @@ const NewsSection = () => {
             Latest News & Updates
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Stay informed about the latest developments and success stories from StudyEase
+            Stay informed about the latest developments and success stories from Eldizer-Finance
           </p>
         </div>
 

@@ -3,55 +3,55 @@ import TopHeader from '../components/TopHeader';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Users, Target, Award, Heart } from 'lucide-react';
+import { Users, Target, Award, Heart, CheckCircle } from 'lucide-react';
 
 const About = () => {
   const values = [
     {
       icon: Heart,
-      title: "Student-First Approach",
-      description: "Every decision we make is guided by what's best for student success and financial wellbeing."
+      title: "Build Credit Score",
+      description: "To make credit system for student through uni-loan so through good credit history they have may be able to be trusted by other financial institution."
     },
     {
       icon: Target,
-      title: "Transparency",
-      description: "Clear terms, honest pricing, and no hidden fees. We believe students deserve complete transparency."
+      title: "Access to Digital Gadgets",
+      description: "To make sure that all student do have access to digital learning device to help student from poor family to copy with new digital world as earlier as possible."
     },
     {
       icon: Users,
-      title: "Community Support",
-      description: "Building a supportive community where students can thrive academically and financially."
+      title: "Riskfree Loan to Graduates",
+      description: "To have youth bank which may be able to help graduate in entrepreneurship through credit score they got since they where in university."
     },
     {
       icon: Award,
-      title: "Excellence",
-      description: "Committed to providing exceptional service and innovative financial solutions for education."
+      title: "Fast loan Application",
+      description: "Student fast loan applications streamline funding, offering swift, accessible financial aid for education expenses, minimizing paperwork and enhancing efficiency."
     }
   ];
 
   const team = [
     {
-      name: "Sarah Johnson",
+      name: "Elibariki Laizer",
       role: "CEO & Founder",
-      bio: "Former university financial aid director with 15+ years of experience helping students navigate educational financing.",
-      image: "https://images.unsplash.com/photo-1494790108755-2616b612b1c7?auto=format&fit=crop&w=400&q=80"
+      bio: "Former university financial aid director with 5+ years of experience helping students navigate educational financing.",
+      image: "laizer.png"
     },
     {
-      name: "Michael Chen",
+      name: "Luhangano Lupenza",
       role: "CTO",
       bio: "Technology leader passionate about creating user-friendly financial tools that empower student success.",
-      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=400&q=80"
+      image: "lupenza.jpg"
     },
-    {
-      name: "Dr. Emily Rodriguez",
-      role: "Head of Student Success",
-      bio: "Educational psychologist dedicated to removing financial barriers to higher education achievement.",
-      image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=400&q=80"
-    }
+    // {
+    //   name: "Dr. Emily Rodriguez",
+    //   role: "Head of Student Success",
+    //   bio: "Educational psychologist dedicated to removing financial barriers to higher education achievement.",
+    //   image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=400&q=80"
+    // }
   ];
 
   const milestones = [
-    { year: "2019", event: "StudyEase founded with mission to help 1,000 students" },
+    { year: "2019", event: "Eldizer Finance founded with mission to help 1,000 students" },
     { year: "2020", event: "Partnered with first 50 universities nationwide" },
     { year: "2021", event: "Reached 10,000 students served milestone" },
     { year: "2022", event: "Launched innovative textbook financing program" },
@@ -65,7 +65,7 @@ const About = () => {
       <Navigation />
       
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-purple-600 to-blue-600 text-white pt-32 pb-20">
+      <section className="bg-gradient-to-r from-[#272f3b] to-[#3b4d63] text-white pt-36 pb-20">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-5xl font-bold mb-6">Empowering Student Success</h1>
           <p className="text-xl text-blue-100 max-w-3xl mx-auto">
@@ -80,17 +80,33 @@ const About = () => {
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-4xl font-bold text-gray-800 mb-6">Our Story</h2>
+              <h2 className="text-4xl font-bold text-gray-800 mb-6">Who We Are</h2>
               <p className="text-lg text-gray-600 mb-6 leading-relaxed">
-                StudyEase was born from a simple observation: too many brilliant students were struggling not with their coursework, 
-                but with the financial burden of education. Our founders, having worked in university financial aid for decades, 
-                saw firsthand how financial stress was impacting student success.
+              El-dizer financial service is only financial service (fintech) in Tanzania that serves scholar from different higher learning institution as well as public servant to get access over a number of credit facilities so that they can simplify their day to day demands and wants through digital platform such as application, website and social media
               </p>
-              <p className="text-lg text-gray-600 leading-relaxed">
+              {/* <p className="text-lg text-gray-600 leading-relaxed">
                 In 2019, we set out to change this narrative. We created a company that truly understands student life – 
                 the irregular income, the tight budgets, the timing mismatches between expenses and financial aid. 
                 Today, we're proud to serve over 50,000 students nationwide.
-              </p>
+              </p> */}
+               <div className="space-y-4">
+              <div className="flex items-center space-x-3">
+                <CheckCircle className="text-green-500" size={24} />
+                <span className="text-gray-700">Digital Accessibility and Convenience</span>
+              </div>
+              <div className="flex items-center space-x-3">
+                <CheckCircle className="text-green-500" size={24} />
+                <span className="text-gray-700">Transparent and Fair Practices</span>
+              </div>
+              <div className="flex items-center space-x-3">
+                <CheckCircle className="text-green-500" size={24} />
+                <span className="text-gray-700">Fast Approval and Disbursement</span>
+              </div>
+              <div className="flex items-center space-x-3">
+                <CheckCircle className="text-green-500" size={24} />
+                <span className="text-gray-700">Customer Support and Relationship Management</span>
+              </div>
+            </div>
             </div>
             <div>
               <img 
@@ -110,27 +126,23 @@ const About = () => {
             <h2 className="text-4xl font-bold text-gray-800 mb-4">Our Mission & Vision</h2>
           </div>
           <div className="grid md:grid-cols-2 gap-12">
-            <Card className="border-l-4 border-l-purple-500">
+            <Card className="border-l-4 border-l-[#df412d]">
               <CardHeader>
-                <CardTitle className="text-purple-600">Our Mission</CardTitle>
+                <CardTitle className="text-[#df412d]">Our Mission</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-lg text-gray-600 leading-relaxed">
-                  To eliminate financial barriers in education by providing transparent, flexible payment solutions 
-                  that align with student life and academic success. We're committed to empowering every student 
-                  to focus on learning, not financial stress.
+                To walk along with scholars and public servant in day to day manner, providing services that enrich their livelihood
                 </p>
               </CardContent>
             </Card>
-            <Card className="border-l-4 border-l-blue-500">
+            <Card className="border-l-4 border-l-[#272f3b]">
               <CardHeader>
-                <CardTitle className="text-blue-600">Our Vision</CardTitle>
+                <CardTitle className="text-[#272f3b]">Our Vision</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-lg text-gray-600 leading-relaxed">
-                  A world where every student has access to quality education, regardless of their financial situation. 
-                  We envision a future where financial flexibility enables academic excellence and creates opportunities 
-                  for all students to achieve their dreams.
+                To be one of the outstanding financial company that can solve financial challenge from university student, graduate, entrepreneur as well as public servant
                 </p>
               </CardContent>
             </Card>
@@ -142,14 +154,14 @@ const About = () => {
       <section className="py-20 bg-white">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-800 mb-4">Our Core Values</h2>
-            <p className="text-xl text-gray-600">The principles that guide everything we do</p>
+            <h2 className="text-4xl font-bold text-gray-800 mb-4">Enabling financial independence</h2>
+            <p className="text-xl text-gray-600">Facilitating self-reliance through accessible and empowering financial solutions.</p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {values.map((value, index) => (
               <Card key={index} className="text-center hover:shadow-lg transition-shadow">
                 <CardHeader>
-                  <div className="mx-auto bg-gradient-to-r from-purple-600 to-blue-600 text-white w-16 h-16 rounded-full flex items-center justify-center mb-4">
+                  <div className="mx-auto bg-gradient-to-r from-[#df412d] to-[#df412d] text-white w-16 h-16 rounded-full flex items-center justify-center mb-4">
                     <value.icon size={32} />
                   </div>
                   <CardTitle className="text-xl">{value.title}</CardTitle>
@@ -180,7 +192,7 @@ const About = () => {
                     className="w-32 h-32 mx-auto rounded-full object-cover mb-4"
                   />
                   <CardTitle className="text-xl">{member.name}</CardTitle>
-                  <CardDescription className="text-purple-600 font-semibold">{member.role}</CardDescription>
+                  <CardDescription className="text-[#df412d] font-semibold">{member.role}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-600">{member.bio}</p>
@@ -201,7 +213,7 @@ const About = () => {
           <div className="max-w-4xl mx-auto">
             {milestones.map((milestone, index) => (
               <div key={index} className="flex items-center mb-8">
-                <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white w-20 h-20 rounded-full flex items-center justify-center font-bold text-lg mr-8">
+                <div className="bg-gradient-to-r from-[#df412d] to-[#df412d] text-white w-20 h-20 rounded-full flex items-center justify-center font-bold text-lg mr-8">
                   {milestone.year}
                 </div>
                 <div className="flex-1">
