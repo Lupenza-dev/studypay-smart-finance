@@ -1,329 +1,562 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, Star, Edit, Trash2, MessageSquare } from 'lucide-react';
+import { Plus, Star, Edit, Trash2, Loader2, X, MessageSquare } from 'lucide-react';
+import { testimonialsService } from '@/services/api';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 
 interface Testimonial {
-  id: string;
-  name: string;
-  university: string;
-  image: string;
+  id: number;
+  name: string; // Changed from title to name
+  position: string;
+  content: string;
+  image_url?: string;
   rating: number;
-  text: string;
   status: 'published' | 'draft';
-  createdAt: string;
+  created_at: string;
+  updated_at: string;
 }
 
 const AdminTestimonialsManager = () => {
-  const [testimonials, setTestimonials] = useState<Testimonial[]>([
-    {
-      id: '1',
-      name: 'Sarah Johnson',
-      university: 'UC Berkeley',
-      image: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?auto=format&fit=crop&w=150&q=80',
-      rating: 5,
-      text: 'StudyEase made it possible for me to get my textbooks at the start of the semester without waiting for my financial aid. The payment plan was so flexible!',
-      status: 'published',
-      createdAt: '2024-01-15'
-    },
-    {
-      id: '2',
-      name: 'Marcus Chen',
-      university: 'MIT',
-      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80',
-      rating: 5,
-      text: 'I needed a new laptop for my computer science program. StudyEase\'s equipment loan program let me get what I needed and pay over the semester.',
-      status: 'published',
-      createdAt: '2024-02-20'
-    },
-    {
-      id: '3',
-      name: 'Emily Rodriguez',
-      university: 'Stanford',
-      image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=150&q=80',
-      rating: 5,
-      text: 'The tuition payment plan saved my semester. I could focus on my studies instead of worrying about how to pay for school. Amazing service!',
-      status: 'draft',
-      createdAt: '2024-03-10'
-    }
-  ]);
-
-  const [isAddingTestimonial, setIsAddingTestimonial] = useState(false);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [testimonialToDelete, setTestimonialToDelete] = useState<number | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingTestimonial, setEditingTestimonial] = useState<Testimonial | null>(null);
   const [formData, setFormData] = useState({
-    name: '',
-    university: '',
-    image: '',
+    name: '', // Changed from title to name
+    position: '',
+    content: '',
     rating: 5,
-    text: '',
-    status: 'draft' as 'published' | 'draft'
+    image: null as File | null,
+    imagePreview: ''
   });
+
   const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (editingTestimonial) {
-      setTestimonials(testimonials.map(testimonial =>
-        testimonial.id === editingTestimonial.id
-          ? { ...testimonial, ...formData }
-          : testimonial
-      ));
+  // Fetch testimonials on component mount
+  const fetchTestimonials = async () => {
+    try {
+      console.log('Fetching testimonials...');
+      setIsLoading(true);
+      const response = await testimonialsService.getAll();
+      console.log('Testimonials response:', response);
+      // Handle both array and object with data property
+      const data = Array.isArray(response) ? response : response.data;
+      if (!Array.isArray(data)) {
+        throw new Error('Invalid testimonials data format');
+      }
+      setTestimonials(data);
+    } catch (error) {
+      console.error('Error fetching testimonials:', error);
       toast({
-        title: "Testimonial updated",
-        description: "Testimonial has been successfully updated.",
+        title: "Error",
+        description: error instanceof Error ? error.message : 'Failed to load testimonials',
+        variant: "destructive",
       });
-      setEditingTestimonial(null);
+      setTestimonials([]); // Set empty array on error to prevent rendering issues
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        await fetchTestimonials();
+      } catch (error) {
+        console.error('Error in useEffect:', error);
+      }
+    };
+    
+    loadData();
+    
+    // Cleanup function
+    return () => {
+      // Any cleanup if needed
+    };
+  }, []);
+
+  // Initialize form when editing
+  useEffect(() => {
+    if (editingTestimonial) {
+      setFormData({
+        name: editingTestimonial.name || '',
+        position: editingTestimonial.position || '',
+        content: editingTestimonial.content,
+        rating: editingTestimonial.rating,
+        image: null,
+        imagePreview: editingTestimonial.image_url || ''
+      });
     } else {
-      const newTestimonial: Testimonial = {
-        id: Date.now().toString(),
-        ...formData,
-        createdAt: new Date().toISOString().split('T')[0]
-      };
-      setTestimonials([...testimonials, newTestimonial]);
-      toast({
-        title: "Testimonial added",
-        description: "New testimonial has been successfully added.",
+      setFormData({
+        name: '',
+        position: '',
+        content: '',
+        rating: 5,
+        image: null,
+        imagePreview: ''
       });
     }
-    setFormData({ name: '', university: '', image: '', rating: 5, text: '', status: 'draft' });
-    setIsAddingTestimonial(false);
+  }, [editingTestimonial, isDialogOpen]);
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (typeof reader.result === 'string') {
+          setFormData(prev => ({
+            ...prev,
+            image: file,
+            imagePreview: reader.result as string
+          }));
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setFormData(prev => ({
+      ...prev,
+      image: null,
+      imagePreview: ''
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!formData.name || !formData.content) {
+      toast({
+        title: "Validation Error",
+        description: "Please fill in all required fields",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      
+      const testimonialData = {
+        name: formData.name, // Changed from title to name
+        position: formData.position,
+        content: formData.content,
+        rating: formData.rating,
+        status: 'published' as const,
+        ...(formData.image && { image: formData.image })
+      };
+
+      if (editingTestimonial) {
+        await testimonialsService.update(editingTestimonial.id, testimonialData);
+        toast({
+          title: "Success",
+          description: "Testimonial updated successfully",
+        });
+      } else {
+        await testimonialsService.create(testimonialData);
+        toast({
+          title: "Success",
+          description: "Testimonial created successfully",
+        });
+      }
+      
+      setIsDialogOpen(false);
+      await fetchTestimonials();
+      
+    } catch (error) {
+      console.error('Error saving testimonial:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : 'Failed to save testimonial',
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDeleteClick = (id: number) => {
+    setTestimonialToDelete(id);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleDeleteTestimonial = async () => {
+    if (testimonialToDelete === null) return;
+    
+    try {
+      setIsSubmitting(true);
+      
+      // Optimistically remove the testimonial
+      const testimonialToRemove = testimonials.find(t => t.id === testimonialToDelete);
+      setTestimonials(prev => prev.filter(t => t.id !== testimonialToDelete));
+      
+      try {
+        await testimonialsService.delete(testimonialToDelete);
+        
+        toast({
+          title: "Success",
+          description: "Testimonial deleted successfully",
+        });
+      } catch (error) {
+        // Revert optimistic update on error
+        if (testimonialToRemove) {
+          setTestimonials(prev => [...prev, testimonialToRemove]);
+        }
+        
+        console.error('Error deleting testimonial:', error);
+        toast({
+          title: "Error",
+          description: error instanceof Error ? error.message : 'Failed to delete testimonial',
+          variant: "destructive",
+        });
+      }
+    } finally {
+      setIsSubmitting(false);
+      setIsDeleteDialogOpen(false);
+      setTestimonialToDelete(null);
+    }
   };
 
   const handleEdit = (testimonial: Testimonial) => {
-    setFormData({
-      name: testimonial.name,
-      university: testimonial.university,
-      image: testimonial.image,
-      rating: testimonial.rating,
-      text: testimonial.text,
-      status: testimonial.status
-    });
     setEditingTestimonial(testimonial);
-    setIsAddingTestimonial(true);
+    setIsDialogOpen(true);
   };
 
-  const handleDelete = (id: string) => {
-    setTestimonials(testimonials.filter(testimonial => testimonial.id !== id));
-    toast({
-      title: "Testimonial deleted",
-      description: "Testimonial has been successfully removed.",
-    });
-  };
-
-  const handleStatusToggle = (id: string) => {
-    setTestimonials(testimonials.map(testimonial =>
-      testimonial.id === id
-        ? { ...testimonial, status: testimonial.status === 'published' ? 'draft' : 'published' }
-        : testimonial
-    ));
-    toast({
-      title: "Status updated",
-      description: "Testimonial status has been successfully changed.",
-    });
+  const handleStatusToggle = async (id: number) => {
+    try {
+      const testimonial = testimonials.find(t => t.id === id);
+      if (!testimonial) return;
+      
+      const newStatus = testimonial.status === 'published' ? 'draft' : 'published';
+      
+      // Create a new object with only the necessary fields for the update
+      const updateData = {
+        name: testimonial.name,
+        position: testimonial.position || '',
+        content: testimonial.content,
+        rating: testimonial.rating,
+        status: newStatus as 'published' | 'draft',
+        _method: 'PUT' as const
+      };
+      
+      await testimonialsService.update(id, updateData);
+      
+      // Update local state optimistically
+      setTestimonials(testimonials.map(t => 
+        t.id === id ? { ...t, status: newStatus } : t
+      ));
+      
+      toast({
+        title: "Status updated",
+        description: `Testimonial has been ${newStatus === 'published' ? 'published' : 'moved to draft'}.`,
+      });
+      
+      // Refresh data from server
+      await fetchTestimonials();
+    } catch (error) {
+      console.error('Error updating testimonial status:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : 'Failed to update status',
+        variant: "destructive",
+      });
+      
+      // Revert optimistic update on error
+      await fetchTestimonials();
+    }
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="p-6">
+      <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Testimonials Management</h1>
-          <p className="text-gray-600">Manage customer testimonials and reviews</p>
+          <h1 className="text-2xl font-bold">Testimonials</h1>
+          <p className="text-sm text-gray-500">Manage student testimonials and reviews</p>
         </div>
-        <Button 
-          onClick={() => setIsAddingTestimonial(true)}
-          className="bg-purple-600 hover:bg-purple-700"
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          Add Testimonial
+        <Button onClick={() => {
+          setEditingTestimonial(null);
+          setIsDialogOpen(true);
+        }}>
+          <Plus className="mr-2 h-4 w-4" /> Add Testimonial
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Testimonials</CardTitle>
-            <MessageSquare className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{testimonials.length}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Published</CardTitle>
-            <Star className="h-4 w-4 text-green-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{testimonials.filter(t => t.status === 'published').length}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Average Rating</CardTitle>
-            <Star className="h-4 w-4 text-yellow-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {(testimonials.reduce((acc, t) => acc + t.rating, 0) / testimonials.length).toFixed(1)}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+     
 
-      {isAddingTestimonial && (
-        <Card>
-          <CardHeader>
-            <CardTitle>{editingTestimonial ? 'Edit Testimonial' : 'Add New Testimonial'}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Name</Label>
-                  <Input
-                    id="name"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="university">University</Label>
-                  <Input
-                    id="university"
-                    value={formData.university}
-                    onChange={(e) => setFormData({ ...formData, university: e.target.value })}
-                    required
-                  />
-                </div>
-              </div>
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>
+              {editingTestimonial ? 'Edit Testimonial' : 'Add New Testimonial'}
+            </DialogTitle>
+            <DialogDescription>
+              {editingTestimonial ? 'Update the testimonial details' : 'Add a new student testimonial'}
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="image">Image URL</Label>
+                <Label htmlFor="name">Name *</Label>
                 <Input
-                  id="image"
-                  value={formData.image}
-                  onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                  placeholder="https://example.com/image.jpg"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="rating">Rating</Label>
-                <Select value={formData.rating.toString()} onValueChange={(value) => setFormData({ ...formData, rating: parseInt(value) })}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="1">1 Star</SelectItem>
-                    <SelectItem value="2">2 Stars</SelectItem>
-                    <SelectItem value="3">3 Stars</SelectItem>
-                    <SelectItem value="4">4 Stars</SelectItem>
-                    <SelectItem value="5">5 Stars</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="text">Testimonial Text</Label>
-                <Textarea
-                  id="text"
-                  value={formData.text}
-                  onChange={(e) => setFormData({ ...formData, text: e.target.value })}
-                  rows={4}
+                  id="name"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  placeholder="Student's name"
                   required
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="status">Status</Label>
-                <Select value={formData.status} onValueChange={(value: 'published' | 'draft') => setFormData({ ...formData, status: value })}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="draft">Draft</SelectItem>
-                    <SelectItem value="published">Published</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Label htmlFor="position">Position</Label>
+                <Input
+                  id="position"
+                  value={formData.position}
+                  onChange={(e) => setFormData({ ...formData, position: e.target.value })}
+                  placeholder="Student's position or university"
+                />
               </div>
-              <div className="flex space-x-2">
-                <Button type="submit" className="bg-purple-600 hover:bg-purple-700">
-                  {editingTestimonial ? 'Update' : 'Add'} Testimonial
-                </Button>
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  onClick={() => {
-                    setIsAddingTestimonial(false);
-                    setEditingTestimonial(null);
-                    setFormData({ name: '', university: '', image: '', rating: 5, text: '', status: 'draft' });
-                  }}
-                >
-                  Cancel
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
-      )}
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {testimonials.map((testimonial) => (
-          <Card key={testimonial.id} className="relative">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <img
-                    src={testimonial.image}
-                    alt={testimonial.name}
-                    className="w-10 h-10 rounded-full"
-                  />
-                  <div>
-                    <h3 className="font-semibold">{testimonial.name}</h3>
-                    <p className="text-sm text-gray-500">{testimonial.university}</p>
+            </div>
+            
+            <div className="space-y-2">
+              <Label>Image</Label>
+              {formData.imagePreview ? (
+                <div className="mt-2 relative">
+                  <div className="w-40 h-40 rounded-md overflow-hidden border">
+                    <img 
+                      src={formData.imagePreview} 
+                      alt="Preview"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="absolute -top-2 -right-2 h-6 w-6 rounded-full"
+                    onClick={handleRemoveImage}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              ) : (
+                <div className="mt-2 flex justify-center px-6 pt-5 pb-6 border-2 border-dashed rounded-md">
+                  <div className="space-y-1 text-center">
+                    <div className="flex text-sm text-gray-600">
+                      <label
+                        htmlFor="image-upload"
+                        className="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none"
+                      >
+                        <span>Upload an image</span>
+                        <input
+                          id="image-upload"
+                          name="image-upload"
+                          type="file"
+                          className="sr-only"
+                          accept="image/*"
+                          onChange={handleImageUpload}
+                        />
+                      </label>
+                      <p className="pl-1">or drag and drop</p>
+                    </div>
+                    <p className="text-xs text-gray-500">PNG, JPG, GIF up to 5MB</p>
                   </div>
                 </div>
-                <div className="flex items-center space-x-1">
-                  <Switch
-                    checked={testimonial.status === 'published'}
-                    onCheckedChange={() => handleStatusToggle(testimonial.id)}
-                  />
-                  <span className={`text-xs ${testimonial.status === 'published' ? 'text-green-600' : 'text-yellow-600'}`}>
-                    {testimonial.status}
-                  </span>
+              )}
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="rating">Rating</Label>
+              <Select 
+                value={formData.rating.toString()} 
+                onValueChange={(value) => setFormData({ ...formData, rating: parseInt(value) })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="1">1 Star</SelectItem>
+                  <SelectItem value="2">2 Stars</SelectItem>
+                  <SelectItem value="3">3 Stars</SelectItem>
+                  <SelectItem value="4">4 Stars</SelectItem>
+                  <SelectItem value="5">5 Stars</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="content">Testimonial Content *</Label>
+              <Textarea
+                id="content"
+                value={formData.content}
+                onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+                rows={4}
+                placeholder="Share the student's experience and feedback"
+                required
+              />
+            </div>
+            
+            <div className="flex justify-end space-x-2 pt-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsDialogOpen(false)}
+                disabled={isSubmitting}
+              >
+                Cancel
+              </Button>
+              <Button 
+                type="submit"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    {editingTestimonial ? 'Updating...' : 'Creating...'}
+                  </>
+                ) : editingTestimonial ? 'Update Testimonial' : 'Create Testimonial'}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Testimonial</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this testimonial? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end space-x-2 pt-4">
+            <Button 
+              variant="outline" 
+              onClick={() => setIsDeleteDialogOpen(false)}
+              disabled={isSubmitting}
+            >
+              Cancel
+            </Button>
+            <Button 
+              variant="destructive" 
+              onClick={handleDeleteTestimonial}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Deleting...
+                </>
+              ) : 'Delete'}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Testimonials</CardTitle>
+          <CardDescription>
+            Manage all student testimonials and reviews
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {isLoading ? (
+            <div className="flex items-center justify-center h-64">
+              <Loader2 className="h-8 w-8 animate-spin" />
+              <span className="ml-2">Loading testimonials...</span>
+            </div>
+          ) : testimonials.length === 0 ? (
+            <div className="p-8 text-center text-gray-500">
+              No testimonials found. Click "Add Testimonial" to create one.
+            </div>
+          ) : (
+            <div className="space-y-6">
+              {testimonials.map((testimonial) => (
+                <div key={testimonial.id} className="flex items-start gap-4 p-4 border rounded-lg">
+                  {testimonial.image_url && (
+                    <div className="flex-shrink-0">
+                      <img
+                        src={testimonial.image_url}
+                        alt={testimonial.title}
+                        className="h-16 w-16 rounded-full object-cover"
+                      />
+                    </div>
+                  )}
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="font-medium">{testimonial.name}</h3>
+                        {testimonial.position && (
+                          <p className="text-sm text-gray-500">{testimonial.position}</p>
+                        )}
+                      </div>
+                      <div className="flex items-center space-x-1">
+                        {[...Array(5)].map((_, i) => (
+                          <Star
+                            key={i}
+                            className={`h-4 w-4 ${i < testimonial.rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                    <p className="mt-2 text-sm text-gray-700 line-clamp-3">{testimonial.content}</p>
+                    <div className="mt-3 flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <div className={`px-2 py-0.5 text-xs rounded-full ${testimonial.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
+                          {testimonial.status === 'published' ? 'Published' : 'Draft'}
+                        </div>
+                        <span className="text-xs text-gray-500">
+                          {new Date(testimonial.created_at).toLocaleDateString()}
+                        </span>
+                      </div>
+                      <div className="flex space-x-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleEdit(testimonial)}
+                        >
+                          <Edit className="h-4 w-4 mr-1" /> Edit
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-red-600 hover:bg-red-50"
+                          onClick={() => handleDeleteClick(testimonial.id)}
+                          disabled={isSubmitting && testimonialToDelete === testimonial.id}
+                        >
+                          {isSubmitting && testimonialToDelete === testimonial.id ? (
+                            <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                          ) : (
+                            <Trash2 className="h-4 w-4 mr-1" />
+                          )}
+                          Delete
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-center">
-                {[...Array(testimonial.rating)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />
-                ))}
-              </div>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-600 text-sm mb-4">"{testimonial.text}"</p>
-              <div className="flex items-center space-x-2">
-                <Button variant="outline" size="sm" onClick={() => handleEdit(testimonial)}>
-                  <Edit className="h-4 w-4 mr-1" />
-                  Edit
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={() => handleDelete(testimonial.id)}
-                  className="text-red-600 hover:text-red-700"
-                >
-                  <Trash2 className="h-4 w-4 mr-1" />
-                  Delete
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 };

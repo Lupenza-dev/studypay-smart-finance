@@ -17,7 +17,8 @@ import {
   Globe,
   HelpCircle,
   Star,
-  Info
+  Info,
+  Image as ImageIcon
 } from 'lucide-react';
 import AdminSidebar from '../components/admin/AdminSidebar';
 import AdminHeader from '../components/admin/AdminHeader';
@@ -29,6 +30,8 @@ import AdminTestimonialsManager from '../components/admin/AdminTestimonialsManag
 import AdminFAQManager from '../components/admin/AdminFAQManager';
 import AdminAboutManager from '../components/admin/AdminAboutManager';
 import AdminSettingsManager from '../components/admin/AdminSettingsManager';
+import MinServicesManager from '../components/admin/MinServicesManager';
+import AdminSlidersManager from '../components/admin/AdminSlidersManager';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -143,12 +146,20 @@ const AdminDashboard = () => {
               </div>
             </TabsContent>
             
+            <TabsContent value="sliders">
+              <AdminSlidersManager />
+            </TabsContent>
+            
             <TabsContent value="news">
               <AdminNewsManager />
             </TabsContent>
             
             <TabsContent value="services">
               <AdminServicesManager />
+            </TabsContent>
+            
+            <TabsContent value="min-services">
+              <MinServicesManager />
             </TabsContent>
             
             <TabsContent value="users">

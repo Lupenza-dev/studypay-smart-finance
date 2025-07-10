@@ -9,7 +9,8 @@ import {
   LogOut,
   Star,
   HelpCircle,
-  Info
+  Info,
+  Image as ImageIcon
 } from 'lucide-react';
 
 interface AdminSidebarProps {
@@ -22,8 +23,10 @@ interface AdminSidebarProps {
 const AdminSidebar = ({ isOpen, activeTab, setActiveTab, onLogout }: AdminSidebarProps) => {
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { id: 'sliders', label: 'Sliders', icon: ImageIcon },
     { id: 'news', label: 'News', icon: FileText },
     { id: 'services', label: 'Services', icon: Globe },
+    { id: 'min-services', label: 'Min Services', icon: Globe },
     { id: 'users', label: 'Users', icon: Users },
     { id: 'testimonials', label: 'Testimonials', icon: Star },
     { id: 'faq', label: 'FAQ', icon: HelpCircle },

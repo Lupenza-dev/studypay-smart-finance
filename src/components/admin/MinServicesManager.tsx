@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Plus, Edit, Trash2, Loader2, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { servicesService } from '@/services/api';
+import { minServicesService } from '@/services/api';
 
 interface Service {
   id: number;
@@ -27,7 +27,7 @@ interface FormData {
   imagePreview: string;
 }
 
-const AdminServicesManager = () => {
+const MinServicesManager = () => {
   const [services, setServices] = useState<Service[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -48,7 +48,7 @@ const AdminServicesManager = () => {
   const fetchServices = async () => {
     try {
       setIsLoading(true);
-      const response = await servicesService.getAll();
+      const response = await minServicesService.getAll();
       setServices(response.data);
     } catch (error) {
       console.error('Error fetching services:', error);
@@ -105,7 +105,7 @@ const AdminServicesManager = () => {
     
     try {
       setIsSubmitting(true);
-      await servicesService.delete(serviceToDelete);
+      await minServicesService.delete(serviceToDelete);
       
       toast({
         title: "Success",
@@ -172,13 +172,13 @@ const AdminServicesManager = () => {
       };
 
       if (editingService) {
-        await servicesService.update(editingService.id, serviceData);
+        await minServicesService.update(editingService.id, serviceData);
         toast({
           title: "Success",
           description: "Service updated successfully",
         });
       } else {
-        await servicesService.create(serviceData);
+        await minServicesService.create(serviceData);
         toast({
           title: "Success",
           description: "Service created successfully",
@@ -204,19 +204,19 @@ const AdminServicesManager = () => {
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold">Services Management</h1>
-          <p className="text-sm text-gray-500">Manage your services and offerings</p>
+          <h1 className="text-2xl font-bold">Min Services Management</h1>
+          <p className="text-sm text-gray-500">Manage your min services and offerings</p>
         </div>
         <Button onClick={handleAddService}>
-          <Plus className="mr-2 h-4 w-4" /> Add Service
+          <Plus className="mr-2 h-4 w-4" /> Add Min Service
         </Button>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Services</CardTitle>
+          <CardTitle>Min Services</CardTitle>
           <CardDescription>
-            Manage all your services from here
+            Manage all your min services from here
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -227,7 +227,7 @@ const AdminServicesManager = () => {
             </div>
           ) : services.length === 0 ? (
             <div className="p-8 text-center text-gray-500">
-              No services found. Click "Add Service" to create one.
+              No min services found. Click "Add Min Service" to create one.
             </div>
           ) : (
             <Table>
@@ -296,10 +296,10 @@ const AdminServicesManager = () => {
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>
-              {editingService ? 'Edit Service' : 'Add New Service'}
+              {editingService ? 'Edit Min Service' : 'Add New Min Service'}
             </DialogTitle>
             <DialogDescription>
-              {editingService ? 'Update the service details' : 'Add a new service to your offerings'}
+              {editingService ? 'Update the min service details' : 'Add a new min service to your offerings'}
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleSubmit}>
@@ -308,7 +308,7 @@ const AdminServicesManager = () => {
                 <Label htmlFor="title">Title *</Label>
                 <Input 
                   id="title" 
-                  placeholder="Enter service title" 
+                  placeholder="Enter min service title" 
                   value={formData.title}
                   onChange={(e) => setFormData({...formData, title: e.target.value})}
                 />
@@ -317,7 +317,7 @@ const AdminServicesManager = () => {
                 <Label htmlFor="content">Content *</Label>
                 <Textarea 
                   id="content" 
-                  placeholder="Enter service content" 
+                  placeholder="Enter min service content" 
                   rows={5}
                   value={formData.content}
                   onChange={(e) => setFormData({...formData, content: e.target.value})}
@@ -388,7 +388,7 @@ const AdminServicesManager = () => {
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     {editingService ? 'Updating...' : 'Creating...'}
                   </>
-                ) : editingService ? 'Update Service' : 'Create Service'}
+                ) : editingService ? 'Update Min Service' : 'Create Min Service'}
               </Button>
             </div>
           </form>
@@ -399,9 +399,9 @@ const AdminServicesManager = () => {
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete Service</DialogTitle>
+            <DialogTitle>Delete Min Service</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete this service? This action cannot be undone.
+              Are you sure you want to delete this min service? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <div className="flex justify-end space-x-2 pt-4">
@@ -431,4 +431,4 @@ const AdminServicesManager = () => {
   );
 };
 
-export default AdminServicesManager;
+export default MinServicesManager;
