@@ -25,6 +25,8 @@ const AdminNewsManager = () => {
   const [isLoading, setIsLoading] = useState(true);
   
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [articleToDelete, setArticleToDelete] = useState<number | null>(null);
   const [editingArticle, setEditingArticle] = useState<any>(null);
   const [formData, setFormData] = useState({
     title: '',
@@ -200,12 +202,37 @@ const AdminNewsManager = () => {
     setIsDialogOpen(true);
   };
 
-  const handleDeleteArticle = (id: number) => {
-    setArticles(articles.filter(article => article.id !== id));
-    toast({
-      title: "Article deleted",
-      description: "The article has been successfully deleted.",
-    });
+  const handleDeleteClick = (id: number) => {
+    setArticleToDelete(id);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleDeleteArticle = async () => {
+    if (!articleToDelete) return;
+    
+    try {
+      setIsSubmitting(true);
+      await newsService.delete(articleToDelete);
+      
+      toast({
+        title: "Success",
+        description: "News article deleted successfully",
+      });
+      
+      // Refresh the news list
+      await fetchNews();
+    } catch (error) {
+      console.error('Error deleting article:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : 'Failed to delete news article',
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+      setIsDeleteDialogOpen(false);
+      setArticleToDelete(null);
+    }
   };
 
   if (isLoading) {
@@ -225,13 +252,13 @@ const AdminNewsManager = () => {
           <p className="text-sm text-gray-500">Manage your news articles and announcements</p>
         </div>
         <Button onClick={handleAddArticle}>
-          <Plus className="mr-2 h-4 w-4" /> Add Article
+          <Plus className="mr-2 h-4 w-4" /> Add News Article
         </Button>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Articles</CardTitle>
+          <CardTitle>News Articles</CardTitle>
           <CardDescription>
             Manage all your news articles from here
           </CardDescription>
@@ -285,8 +312,21 @@ const AdminNewsManager = () => {
                       >
                         <Edit className="h-4 w-4" />
                       </Button>
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
-                        <Trash2 className="h-4 w-4 text-destructive" />
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-8 w-8 text-destructive hover:bg-destructive/10"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteClick(article.id);
+                        }}
+                        disabled={isSubmitting}
+                      >
+                        {isSubmitting && articleToDelete === article.id ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <Trash2 className="h-4 w-4" />
+                        )}
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -409,6 +449,39 @@ const AdminNewsManager = () => {
               </Button>
             </div>
           </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete News</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this News? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end space-x-2 pt-4">
+            <Button 
+              variant="outline" 
+              onClick={() => setIsDeleteDialogOpen(false)}
+              disabled={isSubmitting}
+            >
+              Cancel
+            </Button>
+            <Button 
+              variant="destructive" 
+              onClick={handleDeleteArticle}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Deleting...
+                </>
+              ) : 'Delete'}
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
     </div>

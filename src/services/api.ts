@@ -97,6 +97,24 @@ export const newsService = {
       }
       throw new Error('An unexpected error occurred');
     }
+  },
+  
+  delete: async (id: number) => {
+    try {
+      const response = await axios.delete(`${API_BASE_URL}/news/${id}`, {
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error('Delete error:', error.response);
+        throw new Error(error.response?.data?.message || 'Failed to delete news article');
+      }
+      throw new Error('An unexpected error occurred');
+    }
   }
 };
 
