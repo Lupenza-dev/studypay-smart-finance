@@ -95,13 +95,14 @@ const AdminNewsManager = () => {
 
   useEffect(() => {
     if (editingArticle) {
-      setFormData({
+      setFormData(prev => ({
+        ...prev,
         title: editingArticle.title || '',
-        category: editingArticle.category ? editingArticle.category : '',
-        content: '',
+        category: editingArticle.news_category_id?.toString() || '',
+        content: editingArticle.content || editingArticle.excerpt || '',
         image: null,
-        imagePreview: editingArticle.image || ''
-      });
+        imagePreview: editingArticle.image_url || editingArticle.image || ''
+      }));
     } else {
       setFormData({
         title: '',
@@ -142,22 +143,31 @@ const AdminNewsManager = () => {
         ...(formData.image && { image: formData.image })
       };
 
-      await newsService.create(newsData);
-      
-      toast({
-        title: "Success",
-        description: "News article created successfully",
-      });
+      if (editingArticle) {
+        // Update existing article
+        await newsService.update(editingArticle.id, newsData);
+        toast({
+          title: "Success",
+          description: "News article updated successfully",
+        });
+      } else {
+        // Create new article
+        await newsService.create(newsData);
+        toast({
+          title: "Success",
+          description: "News article created successfully",
+        });
+      }
       
       setIsDialogOpen(false);
       // Refresh the news list
       await fetchNews();
       
     } catch (error) {
-      console.error('Error creating news:', error);
+      console.error('Error saving news:', error);
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : 'Failed to create news article',
+        description: error instanceof Error ? error.message : 'Failed to save news article',
         variant: "destructive",
       });
     } finally {
@@ -165,6 +175,19 @@ const AdminNewsManager = () => {
     }
   };
 
+  const handleEditArticle = (article: any) => {
+    setEditingArticle(article);
+    setFormData(prev => ({
+      ...prev,
+      title: article.title,
+      category: article.news_category_id?.toString() || '',
+      content: article.content || article.excerpt || '',
+      image: null,
+      imagePreview: article.image_url || article.image || ''
+    }));
+    setIsDialogOpen(true);
+  };
+  
   const handleAddArticle = () => {
     setEditingArticle(null);
     setFormData({
@@ -174,11 +197,6 @@ const AdminNewsManager = () => {
       image: null,
       imagePreview: ''
     });
-    setIsDialogOpen(true);
-  };
-
-  const handleEditArticle = (article: any) => {
-    setEditingArticle(article);
     setIsDialogOpen(true);
   };
 
@@ -283,7 +301,7 @@ const AdminNewsManager = () => {
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>
-              {editingArticle ? 'Edit Article' : 'Add New Article'}
+              {editingArticle ? 'Edit News Article' : 'Create News Article'}
             </DialogTitle>
             <DialogDescription>
               {editingArticle ? 'Update the article details' : 'Create a new article for your website'}
@@ -379,17 +397,15 @@ const AdminNewsManager = () => {
               <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
                 Cancel
               </Button>
-              <Button 
-                type="submit" 
-                className="bg-purple-600 hover:bg-purple-700"
-                disabled={isSubmitting}
-              >
+              <Button type="submit" disabled={isSubmitting}>
                 {isSubmitting ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    {editingArticle ? 'Updating...' : 'Creating...'}
+                    Please wait
                   </>
-                ) : editingArticle ? 'Update News' : 'Create News'}
+                ) : (
+                  editingArticle ? 'Update Article' : 'Create Article'
+                )}
               </Button>
             </div>
           </form>

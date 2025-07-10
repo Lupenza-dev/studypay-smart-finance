@@ -67,6 +67,36 @@ export const newsService = {
       }
       throw new Error('An unexpected error occurred');
     }
+  },
+  
+  update: async (id: number, data: {
+    title: string;
+    content: string;
+    news_category_id: string;
+    image?: File;
+    _method?: string;
+  }) => {
+    try {
+      const formData = createFormData({
+        ...data,
+        _method: 'PUT'
+      });
+
+      const response = await axios.post(`${API_BASE_URL}/news/${id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error('Update error:', error.response);
+        throw new Error(error.response?.data?.message || 'Failed to update news');
+      }
+      throw new Error('An unexpected error occurred');
+    }
   }
 };
 
