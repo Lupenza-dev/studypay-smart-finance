@@ -6,11 +6,12 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Eye, EyeOff, Lock, User } from 'lucide-react';
+import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
+import { authService } from '@/services/api';
 
 const AdminLogin = () => {
   const [credentials, setCredentials] = useState({
-    username: '',
+    email: '',
     password: ''
   });
   const [showPassword, setShowPassword] = useState(false);
@@ -22,23 +23,25 @@ const AdminLogin = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simple admin credentials check (in production, this should be handled by backend)
-    if (credentials.username === 'admin' && credentials.password === 'admin123') {
-      localStorage.setItem('adminAuthenticated', 'true');
+    try {
+      const response = await authService.login(credentials);
+      authService.setAuthToken(response.access_token);
+      
       toast({
         title: "Login Successful",
         description: "Welcome to the admin panel!",
       });
+      
       navigate('/admin/dashboard');
-    } else {
+    } catch (error) {
       toast({
         title: "Login Failed",
-        description: "Invalid username or password",
+        description: error instanceof Error ? error.message : 'Invalid email or password',
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
-    
-    setIsLoading(false);
   };
 
   return (
@@ -56,16 +59,16 @@ const AdminLogin = () => {
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="username">Username</Label>
+              <Label htmlFor="email">Email</Label>
               <div className="relative">
-                <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                 <Input
-                  id="username"
-                  type="text"
-                  placeholder="Enter username"
-                  value={credentials.username}
+                  id="email"
+                  type="email"
+                  placeholder="Enter your email"
+                  value={credentials.email}
                   onChange={(e) =>
-                    setCredentials({ ...credentials, username: e.target.value })
+                    setCredentials({ ...credentials, email: e.target.value })
                   }
                   className="pl-10"
                   required

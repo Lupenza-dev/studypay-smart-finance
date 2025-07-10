@@ -37,14 +37,14 @@ const AdminDashboard = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    const isAuthenticated = localStorage.getItem('adminAuthenticated');
-    if (!isAuthenticated) {
+    const token = localStorage.getItem('token');
+    if (!token) {
       navigate('/admin');
     }
   }, [navigate]);
 
   const handleLogout = () => {
-    localStorage.removeItem('adminAuthenticated');
+    localStorage.removeItem('token');
     toast({
       title: "Logged out",
       description: "You have been successfully logged out.",
