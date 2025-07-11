@@ -549,6 +549,23 @@ export const sliderService = {
 };
 
 export const faqService = {
+  getCategories: async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/faq-categories`, {
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw new Error(error.response?.data?.message || 'Failed to fetch FAQ categories');
+      }
+      throw error;
+    }
+  },
+
   getAll: async () => {
     try {
       const response = await axios.get(`${API_BASE_URL}/faqs`, {

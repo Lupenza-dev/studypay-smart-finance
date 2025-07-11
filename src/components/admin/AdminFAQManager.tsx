@@ -53,24 +53,16 @@ const AdminFAQManager = () => {
         setIsLoading(true);
         const [faqsResponse, categoriesResponse] = await Promise.all([
           faqService.getAll(),
-          // Replace with actual categories API call if available
-          Promise.resolve({
-            data: [
-              { id: 1, name: 'Textbook Financing' },
-              { id: 2, name: 'Payment Plans' },
-              { id: 3, name: 'Account Management' },
-              { id: 4, name: 'Technical Support' }
-            ]
-          })
+          faqService.getCategories()
         ]);
         
         setFaqs(faqsResponse.data || []);
-        setCategories(categoriesResponse.data);
+        setCategories(categoriesResponse.data || []);
       } catch (error) {
-        console.error('Error loading FAQs:', error);
+        console.error('Error loading data:', error);
         toast({
           title: 'Error',
-          description: error instanceof Error ? error.message : 'Failed to load FAQs',
+          description: error instanceof Error ? error.message : 'Failed to load data',
           variant: 'destructive',
         });
       } finally {
@@ -223,35 +215,7 @@ const AdminFAQManager = () => {
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total FAQs</CardTitle>
-            <HelpCircle className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{faqs.length}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Published</CardTitle>
-            <HelpCircle className="h-4 w-4 text-green-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{faqs.filter(f => f.status === 'published').length}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Categories</CardTitle>
-            <HelpCircle className="h-4 w-4 text-blue-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{categories.length}</div>
-          </CardContent>
-        </Card>
-      </div>
+     
 
       <Card>
         <CardHeader>
@@ -377,23 +341,11 @@ const AdminFAQManager = () => {
                 <div className="flex-1">
                   <CardTitle className="text-lg">{faq.title}</CardTitle>
                   <CardDescription>
-                    Category: {getCategoryName(faq.category_id)} | Created: {new Date(faq.created_at).toLocaleDateString()}
+                    Category: {faq.category?.name} | Created: {new Date(faq.created_at).toLocaleDateString()}
                   </CardDescription>
                 </div>
                 <div className="flex items-center space-x-4">
                   <div className="flex items-center space-x-2">
-                    <div className="relative">
-                      <Switch
-                        checked={faq.status === 'published'}
-                        onCheckedChange={() => handleStatusToggle(faq.id)}
-                        disabled={isSubmitting || isDeleting === faq.id || isTogglingStatus === faq.id}
-                      />
-                      {isTogglingStatus === faq.id && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-white/50">
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                        </div>
-                      )}
-                    </div>
                     <span className={`text-sm ${faq.status === 'published' ? 'text-green-600' : 'text-yellow-600'}`}>
                       {faq.status}
                     </span>
