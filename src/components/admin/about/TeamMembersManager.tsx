@@ -52,7 +52,7 @@ const TeamMembersManager = ({
               <Users className="h-5 w-5" />
               Team Members
             </CardTitle>
-            <CardDescription>Manage your team members displayed on the about page</CardDescription>
+            <CardDescription>Manage team members displayed on the about page</CardDescription>
           </div>
           <Button onClick={() => setIsAddingTeamMember(true)} className="bg-purple-600 hover:bg-purple-700">
             <Users className="h-4 w-4 mr-2" />
@@ -87,13 +87,13 @@ const TeamMembersManager = ({
               </div>
               <div className="flex items-center justify-between mt-4">
                 <div className="flex items-center space-x-2">
-                  <Switch
+                  {/* <Switch
                     checked={member.isPublished}
                     onCheckedChange={() => onToggleTeamMember(member.id)}
-                  />
-                  <span className={`text-sm ${member.isPublished ? 'text-green-600' : 'text-gray-400'}`}>
+                  /> */}
+                  {/* <span className={`text-sm ${member.isPublished ? 'text-green-600' : 'text-gray-400'}`}>
                     {member.isPublished ? 'Published' : 'Draft'}
-                  </span>
+                  </span> */}
                 </div>
                 <Button
                   variant="outline"

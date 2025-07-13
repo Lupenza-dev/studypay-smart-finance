@@ -39,19 +39,19 @@ const AboutSectionsManager = ({ aboutSections, onSectionUpdate }: AboutSectionsM
                   onChange={(e) => onSectionUpdate(section.id, 'title', e.target.value)}
                   className="font-semibold text-lg"
                 />
-                <div className="flex items-center space-x-2">
+                {/* <div className="flex items-center space-x-2">
                   <Label htmlFor={`order-${section.id}`} className="text-sm">Order:</Label>
-                  <Input
+                  {/* <Input
                     id={`order-${section.id}`}
                     type="number"
                     value={section.order}
                     onChange={(e) => onSectionUpdate(section.id, 'order', parseInt(e.target.value))}
                     className="w-20"
                     min="1"
-                  />
-                </div>
+                  /> */}
+                {/* </div> */}
               </div>
-              <div className="flex items-center space-x-2">
+              {/* <div className="flex items-center space-x-2">
                 <Switch
                   checked={section.isPublished}
                   onCheckedChange={(checked) => onSectionUpdate(section.id, 'isPublished', checked)}
@@ -59,7 +59,7 @@ const AboutSectionsManager = ({ aboutSections, onSectionUpdate }: AboutSectionsM
                 <span className={`text-sm ${section.isPublished ? 'text-green-600' : 'text-gray-400'}`}>
                   {section.isPublished ? 'Published' : 'Draft'}
                 </span>
-              </div>
+              </div> */}
             </div>
             <Textarea
               value={section.content}

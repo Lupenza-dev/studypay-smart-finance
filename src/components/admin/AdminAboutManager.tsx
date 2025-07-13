@@ -42,6 +42,13 @@ const AdminAboutManager = () => {
     },
     {
       id: '3',
+      title: 'About Us',
+      content: 'We believe in transparency, student-first approach, and building lasting relationships with educational institutions to better serve students across the country.',
+      isPublished: true,
+      order: 3
+    },
+    {
+      id: '3',
       title: 'Our Values',
       content: 'We believe in transparency, student-first approach, and building lasting relationships with educational institutions to better serve students across the country.',
       isPublished: true,
@@ -141,10 +148,10 @@ const AdminAboutManager = () => {
         </Button>
       </div>
 
-      <CompanyStatsSection 
+      {/* <CompanyStatsSection 
         companyStats={companyStats}
         setCompanyStats={setCompanyStats}
-      />
+      /> */}
 
       <AboutSectionsManager 
         aboutSections={aboutSections}
