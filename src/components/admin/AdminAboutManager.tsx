@@ -1,8 +1,17 @@
+import React, { useState, useEffect } from 'react';
+import { teamMemberService, TeamMemberData } from '@/services/api';
 
-import { useState } from 'react';
+// Define types for form data
+interface CreateTeamMemberData {
+  name: string;
+  position: string;
+  bio: string;
+  image: File | string | null;
+  isPublished: boolean;
+}
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { Save } from 'lucide-react';
+import { Save, AlertCircle } from 'lucide-react';
 import CompanyStatsSection from './about/CompanyStatsSection';
 import AboutSectionsManager from './about/AboutSectionsManager';
 import TeamMembersManager from './about/TeamMembersManager';
@@ -15,16 +24,10 @@ interface AboutSection {
   order: number;
 }
 
-interface TeamMember {
-  id: string;
-  name: string;
-  position: string;
-  image: string;
-  bio: string;
-  isPublished: boolean;
-}
+// TeamMember interface is imported from TeamMembersManager
 
 const AdminAboutManager = () => {
+  const [error, setError] = useState<Error | null>(null);
   const [aboutSections, setAboutSections] = useState<AboutSection[]>([
     {
       id: '1',
@@ -56,24 +59,7 @@ const AdminAboutManager = () => {
     }
   ]);
 
-  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([
-    {
-      id: '1',
-      name: 'John Smith',
-      position: 'CEO & Founder',
-      image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=150&q=80',
-      bio: 'Former student who experienced financial challenges and founded StudyEase to help other students.',
-      isPublished: true
-    },
-    {
-      id: '2',
-      name: 'Sarah Davis',
-      position: 'Chief Technology Officer',
-      image: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?auto=format&fit=crop&w=150&q=80',
-      bio: 'Technology leader with 10+ years experience in fintech and educational technology.',
-      isPublished: true
-    }
-  ]);
+  const [teamMembers, setTeamMembers] = useState<TeamMemberData[]>([]); // Initialize as empty array
 
   const [companyStats, setCompanyStats] = useState({
     foundedYear: '2020',
@@ -84,15 +70,62 @@ const AdminAboutManager = () => {
   });
 
   const [isAddingTeamMember, setIsAddingTeamMember] = useState(false);
-  const [newTeamMember, setNewTeamMember] = useState({
+  const [isLoading, setIsLoading] = useState(true);
+  // Define the type for the new team member form data
+  interface NewTeamMemberData {
+    name: string;
+    position: string;
+    bio: string;
+    image: File | null;
+    isPublished: boolean;
+  }
+
+  const [newTeamMember, setNewTeamMember] = useState<NewTeamMemberData>({
     name: '',
     position: '',
-    image: '',
     bio: '',
+    image: null,
     isPublished: true
   });
 
   const { toast } = useToast();
+
+  // Fetch team members on component mount
+  useEffect(() => {
+    const fetchTeamMembers = async () => {
+      console.log('Fetching team members...');
+      try {
+        const members = await teamMemberService.getAll();
+        console.log('Team members data received:', members);
+        
+        // Ensure members is an array before setting it
+        const safeMembers = Array.isArray(members) ? members : [];
+        console.log('Setting team members:', safeMembers);
+        
+        setTeamMembers(safeMembers);
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching team members:', err);
+        setError(err instanceof Error ? err : new Error('Failed to fetch team members'));
+        // Set empty array on error to prevent null/undefined issues
+        setTeamMembers([]);
+        toast({
+          title: 'Error',
+          description: 'Failed to load team members',
+          variant: 'destructive',
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchTeamMembers().catch(err => {
+      console.error('Unhandled error in fetchTeamMembers:', err);
+      setError(err instanceof Error ? err : new Error('An unknown error occurred'));
+      // Set empty array on unhandled error
+      setTeamMembers([]);
+    });
+  }, [toast]);
 
   const handleSectionUpdate = (id: string, field: keyof AboutSection, value: string | boolean | number) => {
     setAboutSections(aboutSections.map(section =>
@@ -107,33 +140,139 @@ const AdminAboutManager = () => {
     });
   };
 
-  const handleAddTeamMember = () => {
-    const newMember: TeamMember = {
-      id: Date.now().toString(),
-      ...newTeamMember
-    };
-    setTeamMembers([...teamMembers, newMember]);
-    setNewTeamMember({ name: '', position: '', image: '', bio: '', isPublished: true });
-    setIsAddingTeamMember(false);
-    toast({
-      title: "Team member added",
-      description: "New team member has been successfully added.",
-    });
+  const handleAddTeamMember = async (memberData: NewTeamMemberData) => {
+    try {
+      // Validate required fields
+      if (!memberData.name || !memberData.position || !memberData.bio) {
+        throw new Error('Please fill in all required fields');
+      }
+      
+      // Convert the data to the format expected by the service
+      const serviceData = {
+        ...memberData,
+        // Ensure isPublished has a default value of true if not provided
+        isPublished: memberData.isPublished ?? true
+      };
+      
+      // Log the data being sent
+      console.log('Submitting team member:', {
+        name: serviceData.name,
+        position: serviceData.position,
+        bio: serviceData.bio,
+        isPublished: serviceData.isPublished,
+        hasImage: !!serviceData.image
+      });
+      
+      // Use the teamMemberService to create the team member
+      const newMember = await teamMemberService.create(serviceData);
+      setTeamMembers(prevMembers => [...prevMembers, newMember]);
+      setIsAddingTeamMember(false);
+      setNewTeamMember({
+        name: '',
+        position: '',
+        bio: '',
+        image: null,
+        isPublished: true
+      });
+      toast({
+        title: 'Success',
+        description: 'Team member added successfully',
+      });
+    } catch (error) {
+      console.error('Error adding team member:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to add team member';
+      toast({
+        title: 'Error',
+        description: errorMessage,
+        variant: 'destructive',
+      });
+      throw error; // Re-throw to let the caller handle the error if needed
+    }
   };
 
-  const handleDeleteTeamMember = (id: string) => {
-    setTeamMembers(teamMembers.filter(member => member.id !== id));
-    toast({
-      title: "Team member removed",
-      description: "Team member has been successfully removed.",
-    });
+  const handleUpdateTeamMember = async (id: string | number, updates: Partial<TeamMemberData>): Promise<void> => {
+    try {
+      const updatedMember = await teamMemberService.update(id, updates);
+      setTeamMembers(prevMembers => 
+        prevMembers.map(member => 
+          member.id === id 
+            ? { ...member, ...updatedMember } 
+            : member
+        )
+      );
+      
+      toast({
+        title: 'Success',
+        description: 'Team member updated successfully',
+      });
+    } catch (error) {
+      console.error('Error updating team member:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to update team member';
+      toast({
+        title: 'Error',
+        description: errorMessage,
+        variant: 'destructive',
+      });
+      throw error;
+    }
   };
 
-  const handleTeamMemberToggle = (id: string) => {
-    setTeamMembers(teamMembers.map(member =>
-      member.id === id ? { ...member, isPublished: !member.isPublished } : member
-    ));
+  const handleDeleteTeamMember = async (id: string | number) => {
+    try {
+      await teamMemberService.delete(id);
+      setTeamMembers(prevMembers => 
+        prevMembers.filter(member => member.id !== id)
+      );
+      toast({
+        title: 'Success',
+        description: 'Team member deleted successfully',
+      });
+    } catch (error) {
+      console.error('Error deleting team member:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to delete team member';
+      toast({
+        title: 'Error',
+        description: errorMessage,
+        variant: 'destructive',
+      });
+      throw error;
+    }
   };
+
+  const handleTogglePublish = async (id: string | number, isPublished: boolean): Promise<void> => {
+    try {
+      const updatedMember = await teamMemberService.togglePublish(id, isPublished);
+      setTeamMembers(prevMembers => 
+        prevMembers.map(member => 
+          member.id === id 
+            ? { ...member, ...updatedMember }
+            : member
+        )
+      );
+      toast({ 
+        title: 'Success', 
+        description: `Team member ${isPublished ? 'published' : 'unpublished'} successfully` 
+      });
+    } catch (error) {
+      console.error('Error toggling team member publish status:', error);
+      const errorMessage = error instanceof Error ? error.message : `Failed to ${isPublished ? 'publish' : 'unpublish'} team member`;
+      toast({ 
+        title: 'Error', 
+        description: errorMessage, 
+        variant: 'destructive' 
+      });
+      throw error;
+    }
+  };
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -158,18 +297,38 @@ const AdminAboutManager = () => {
         onSectionUpdate={handleSectionUpdate}
       />
 
-      <TeamMembersManager 
+      <TeamMembersManager
         teamMembers={teamMembers}
         isAddingTeamMember={isAddingTeamMember}
         newTeamMember={newTeamMember}
         setIsAddingTeamMember={setIsAddingTeamMember}
-        setNewTeamMember={setNewTeamMember}
+        setNewTeamMember={(updater) => {
+          if (typeof updater === 'function') {
+            setNewTeamMember(prev => {
+              const updated = updater(prev);
+              return {
+                ...prev,
+                ...updated,
+                // Ensure we always have a valid image (either File or null)
+                image: updated.image instanceof File ? updated.image : null
+              };
+            });
+          } else {
+            setNewTeamMember({
+              ...updater,
+              // Ensure we always have a valid image (either File or null)
+              image: updater.image instanceof File ? updater.image : null
+            });
+          }
+        }}
         onAddTeamMember={handleAddTeamMember}
         onDeleteTeamMember={handleDeleteTeamMember}
-        onToggleTeamMember={handleTeamMemberToggle}
+        onToggleTeamMember={handleTogglePublish}
+        onUpdateTeamMember={handleUpdateTeamMember}
       />
     </div>
   );
 };
 
+// Main component export
 export default AdminAboutManager;

@@ -659,6 +659,169 @@ export const faqService = {
   }
 };
 
+// Interface for team member data
+export interface TeamMemberData {
+  id: number | string;
+  name: string;
+  position: string;
+  bio: string | null;
+  image_url: string | null;
+  is_published?: boolean;
+  isPublished?: boolean; // For backward compatibility
+}
+
+export const teamMemberService = {
+  getAll: async (): Promise<TeamMemberData[]> => {
+    try {
+      const response = await axios.get<TeamMemberData[]>(`${API_BASE_URL}/team-members`, {
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      // Ensure we return properly typed data
+      const data = Array.isArray(response.data) ? response.data : [];
+      return data.map(member => ({
+        ...member,
+        // Ensure both is_published and isPublished are set for backward compatibility
+        is_published: member.is_published ?? member.isPublished ?? false,
+        isPublished: member.is_published ?? member.isPublished ?? false
+      }));
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw new Error(error.response?.data?.message || 'Failed to fetch team members');
+      }
+      throw error;
+    }
+  },
+
+  create: async (data: {
+    name: string;
+    position: string;
+    bio: string;
+    image?: File | string | null;
+    isPublished?: boolean;
+    is_published?: boolean;
+  }): Promise<TeamMemberData> => {
+    try {
+      // Use is_published if provided, otherwise fall back to isPublished
+      const is_published = data.is_published ?? data.isPublished ?? false;
+      const formData = createFormData({
+        ...data,
+        is_published // Ensure we're using the correct field name for the API
+      });
+      
+      const response = await axios.post<TeamMemberData>(`${API_BASE_URL}/team-members`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      
+      return {
+        ...response.data,
+        // Ensure both is_published and isPublished are set in the response
+        is_published: response.data.is_published ?? is_published,
+        isPublished: response.data.is_published ?? is_published
+      };
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw new Error(error.response?.data?.message || 'Failed to create team member');
+      }
+      throw error;
+    }
+  },
+
+  update: async (id: number | string, data: {
+    name?: string;
+    position?: string;
+    bio?: string;
+    image?: File | string | null;
+    isPublished?: boolean;
+    is_published?: boolean;
+  }): Promise<TeamMemberData> => {
+    // If image is a string, it's likely a URL, so we should exclude it from the form data
+    const updateData = { ...data };
+    if (typeof updateData.image === 'string') {
+      delete updateData.image;
+    }
+    
+    // Use is_published if provided, otherwise fall back to isPublished
+    const is_published = updateData.is_published ?? updateData.isPublished;
+    if (is_published !== undefined) {
+      updateData.is_published = is_published;
+    }
+    
+    try {
+      const formData = createFormData({
+        ...updateData,
+        _method: 'PATCH'
+      });
+      
+      const response = await axios.post<TeamMemberData>(`${API_BASE_URL}/team-members/${id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      
+      return {
+        ...response.data,
+        // Ensure both is_published and isPublished are set in the response
+        is_published: response.data.is_published ?? is_published ?? false,
+        isPublished: response.data.is_published ?? is_published ?? false
+      };
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw new Error(error.response?.data?.message || 'Failed to update team member');
+      }
+      throw error;
+    }
+  },
+
+  delete: async (id: number | string): Promise<void> => {
+    try {
+      await axios.delete(`${API_BASE_URL}/team-members/${id}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw new Error(error.response?.data?.message || 'Failed to delete team member');
+      }
+      throw error;
+    }
+  },
+
+  togglePublish: async (id: number | string, isPublished: boolean): Promise<TeamMemberData> => {
+    try {
+      const response = await axios.patch<TeamMemberData>(
+        `${API_BASE_URL}/team-members/${id}/publish`, 
+        { is_published: isPublished },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      
+      return {
+        ...response.data,
+        // Ensure both is_published and isPublished are set in the response
+        is_published: response.data.is_published ?? isPublished,
+        isPublished: response.data.is_published ?? isPublished
+      };
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw new Error(error.response?.data?.message || 'Failed to update team member status');
+      }
+      throw error;
+    }
+  }
+};
+
 export const authService = {
   login: async (credentials: LoginCredentials) => {
     try {
