@@ -22,7 +22,7 @@ const Navigation = () => {
           >
             <img 
               src="/logo.png" 
-              alt="StudyEase Logo" 
+              alt="Eldizer Logo" 
               className="h-12 w-auto" 
             />
           </div>
