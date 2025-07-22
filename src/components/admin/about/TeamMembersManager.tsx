@@ -256,13 +256,13 @@ const TeamMembersManager = (props: TeamMembersManagerProps) => {
                       </div>
                       <div className="flex items-center justify-between mt-4">
                         <div className="flex items-center space-x-2">
-                          <Switch
+                          {/* <Switch
                             checked={isPublished}
                             onCheckedChange={(checked) => onToggleTeamMember(member.id, checked)}
                           />
                           <span className={`text-sm ${isPublished ? 'text-green-600' : 'text-gray-400'}`}>
                             {isPublished ? 'Published' : 'Draft'}
-                          </span>
+                          </span> */}
                         </div>
                         <div className="space-x-2">
                           <Button

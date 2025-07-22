@@ -1,20 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { teamMemberService, TeamMemberData } from '@/services/api';
-
-// Define types for form data
-interface CreateTeamMemberData {
-  name: string;
-  position: string;
-  bio: string;
-  image: File | string | null;
-  isPublished: boolean;
-}
+import { teamMemberService, TeamMemberData, aboutService } from '@/services/api';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { Save, AlertCircle } from 'lucide-react';
+import { Save, AlertCircle, X } from 'lucide-react';
 import CompanyStatsSection from './about/CompanyStatsSection';
 import AboutSectionsManager from './about/AboutSectionsManager';
 import TeamMembersManager from './about/TeamMembersManager';
+import AboutUs from '@/components/AboutUs';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+
+interface AboutData {
+  id: number;
+  vision: string;
+  mission: string;
+  content: string;
+  values: string;
+  image_url: string;
+  is_published: boolean;
+  created_at: string;
+  updated_at: string;
+  created_by: string;
+}
 
 interface AboutSection {
   id: string;
@@ -24,43 +30,13 @@ interface AboutSection {
   order: number;
 }
 
-// TeamMember interface is imported from TeamMembersManager
-
 const AdminAboutManager = () => {
   const [error, setError] = useState<Error | null>(null);
-  const [aboutSections, setAboutSections] = useState<AboutSection[]>([
-    {
-      id: '1',
-      title: 'Our Mission',
-      content: 'At StudyEase, we recognize that education costs can be overwhelming. That\'s why we\'ve created flexible payment solutions that work with your student lifestyle, not against it.',
-      isPublished: true,
-      order: 1
-    },
-    {
-      id: '2',
-      title: 'Our Vision',
-      content: 'Our mission is to remove financial barriers from education by providing transparent, student-friendly payment options that let you focus on what matters most - your studies.',
-      isPublished: true,
-      order: 2
-    },
-    {
-      id: '3',
-      title: 'About Us',
-      content: 'We believe in transparency, student-first approach, and building lasting relationships with educational institutions to better serve students across the country.',
-      isPublished: true,
-      order: 3
-    },
-    {
-      id: '3',
-      title: 'Our Values',
-      content: 'We believe in transparency, student-first approach, and building lasting relationships with educational institutions to better serve students across the country.',
-      isPublished: true,
-      order: 3
-    }
-  ]);
-
-  const [teamMembers, setTeamMembers] = useState<TeamMemberData[]>([]); // Initialize as empty array
-
+  const [aboutData, setAboutData] = useState<AboutData | null>(null);
+  const [teamMembers, setTeamMembers] = useState<TeamMemberData[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [aboutSections, setAboutSections] = useState<AboutSection[]>([]);
   const [companyStats, setCompanyStats] = useState({
     foundedYear: '2020',
     studentsServed: '50,000+',
@@ -68,18 +44,7 @@ const AdminAboutManager = () => {
     totalFunding: '$25M+',
     satisfactionRate: '98%'
   });
-
   const [isAddingTeamMember, setIsAddingTeamMember] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  // Define the type for the new team member form data
-  interface NewTeamMemberData {
-    name: string;
-    position: string;
-    bio: string;
-    image: File | null;
-    isPublished: boolean;
-  }
-
   const [newTeamMember, setNewTeamMember] = useState<NewTeamMemberData>({
     name: '',
     position: '',
@@ -87,31 +52,30 @@ const AdminAboutManager = () => {
     image: null,
     isPublished: true
   });
-
   const { toast } = useToast();
 
-  // Fetch team members on component mount
+  // Fetch about data and team members on component mount
   useEffect(() => {
-    const fetchTeamMembers = async () => {
-      console.log('Fetching team members...');
+    const fetchData = async () => {
       try {
+        setIsLoading(true);
+        
+        // Fetch about data
+        const aboutResponse = await aboutService.get();
+        if (aboutResponse.success && aboutResponse.data) {
+          setAboutData(aboutResponse.data);
+        }
+
+        // Fetch team members
         const members = await teamMemberService.getAll();
-        console.log('Team members data received:', members);
+        setTeamMembers(members);
         
-        // Ensure members is an array before setting it
-        const safeMembers = Array.isArray(members) ? members : [];
-        console.log('Setting team members:', safeMembers);
-        
-        setTeamMembers(safeMembers);
-        setError(null);
-      } catch (err) {
-        console.error('Error fetching team members:', err);
-        setError(err instanceof Error ? err : new Error('Failed to fetch team members'));
-        // Set empty array on error to prevent null/undefined issues
-        setTeamMembers([]);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setError(error instanceof Error ? error : new Error('An error occurred'));
         toast({
           title: 'Error',
-          description: 'Failed to load team members',
+          description: 'Failed to fetch about data. Please try again.',
           variant: 'destructive',
         });
       } finally {
@@ -119,13 +83,72 @@ const AdminAboutManager = () => {
       }
     };
 
-    fetchTeamMembers().catch(err => {
-      console.error('Unhandled error in fetchTeamMembers:', err);
-      setError(err instanceof Error ? err : new Error('An unknown error occurred'));
-      // Set empty array on unhandled error
-      setTeamMembers([]);
-    });
+    fetchData();
   }, [toast]);
+
+  const handleSave = async () => {
+    if (!aboutData) return;
+    
+    setIsSaving(true);
+    try {
+      const formData = new FormData();
+      
+      // Add all about data to formData
+      Object.entries(aboutData).forEach(([key, value]) => {
+        // Skip null/undefined values and the image_url if it's a blob URL (temporary preview)
+        if (value != null && !(key === 'image_url' && typeof value === 'string' && value.startsWith('blob:'))) {
+          formData.append(key, value);
+        }
+      });
+
+      // Check if we have a file to upload
+      const fileInput = document.getElementById('about-image-upload') as HTMLInputElement;
+      if (fileInput?.files?.[0]) {
+        formData.append('image', fileInput.files[0]);
+      }
+
+      // Add _method=PUT for Laravel to recognize it as an update
+      formData.append('_method', 'PUT');
+
+      // Call the update endpoint
+      const response = await aboutService.update(aboutData.id, formData);
+      
+      if (response.success) {
+        // Update the local state with the response data
+        setAboutData(prev => ({
+          ...prev,
+          ...response.data,
+          // Make sure to keep any local state that wasn't in the response
+          id: response.data.id || aboutData.id
+        }));
+        
+        toast({
+          title: 'Success',
+          description: 'About page updated successfully',
+        });
+      } else {
+        throw new Error(response.message || 'Failed to update about page');
+      }
+    } catch (error) {
+      console.error('Error updating about page:', error);
+      toast({
+        title: 'Error',
+        description: error instanceof Error ? error.message : 'Failed to update about page',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleAboutDataChange = (field: keyof AboutData, value: string | boolean) => {
+    if (!aboutData) return;
+    
+    setAboutData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
 
   const handleSectionUpdate = (id: string, field: keyof AboutSection, value: string | boolean | number) => {
     setAboutSections(aboutSections.map(section =>
@@ -265,70 +288,194 @@ const AdminAboutManager = () => {
     }
   };
 
-  // Show loading state
+  const handleCompanyStatsChange = (stats: typeof companyStats) => {
+    setCompanyStats(stats);
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Create preview URL
+    const previewUrl = URL.createObjectURL(file);
+    
+    try {
+      // In a real implementation, you would upload the file to your server here
+      // and get back the image URL. For now, we'll just use the preview URL.
+      // Replace this with your actual file upload logic
+      // const formData = new FormData();
+      // formData.append('image', file);
+      // const response = await api.uploadImage(formData);
+      // const imageUrl = response.data.url;
+      
+      // For now, we'll use the preview URL
+      handleAboutDataChange('image_url', previewUrl);
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to upload image',
+        variant: 'destructive',
+      });
+    }
+  };
+
   if (isLoading) {
+    return <div className="flex justify-center items-center h-64">Loading...</div>;
+  }
+
+  if (error) {
     return (
-      <div className="flex items-center justify-center min-h-[50vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
+      <div className="p-4 bg-red-50 text-red-700 rounded-md flex items-center">
+        <AlertCircle className="h-5 w-5 mr-2" />
+        {error.message}
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">About Us Management</h1>
-          <p className="text-gray-600">Manage company information and team details</p>
-        </div>
-        <Button onClick={handleSaveChanges} className="bg-purple-600 hover:bg-purple-700">
-          <Save className="h-4 w-4 mr-2" />
-          Save All Changes
+    <div className="space-y-8">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold">About Page Manager</h2>
+        <Button 
+          onClick={handleSave}
+          disabled={isSaving}
+          className="bg-blue-600 hover:bg-blue-700 text-white"
+        >
+          {isSaving ? 'Saving...' : 'Save Changes'}
         </Button>
       </div>
 
-      {/* <CompanyStatsSection 
-        companyStats={companyStats}
-        setCompanyStats={setCompanyStats}
-      /> */}
+      <div className="bg-white rounded-lg shadow p-6">
+        <h3 className="text-lg font-semibold mb-4">About Us Content</h3>
+        <div className="space-y-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Vision</label>
+            <textarea
+              value={aboutData?.vision || ''}
+              onChange={(e) => handleAboutDataChange('vision', e.target.value)}
+              className="w-full p-3 border rounded-md"
+              rows={4}
+              placeholder="Enter company vision..."
+            />
+          </div>
 
-      <AboutSectionsManager 
-        aboutSections={aboutSections}
-        onSectionUpdate={handleSectionUpdate}
-      />
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Mission</label>
+            <textarea
+              value={aboutData?.mission || ''}
+              onChange={(e) => handleAboutDataChange('mission', e.target.value)}
+              className="w-full p-3 border rounded-md"
+              rows={4}
+              placeholder="Enter company mission..."
+            />
+          </div>
 
-      <TeamMembersManager
-        teamMembers={teamMembers}
-        isAddingTeamMember={isAddingTeamMember}
-        newTeamMember={newTeamMember}
-        setIsAddingTeamMember={setIsAddingTeamMember}
-        setNewTeamMember={(updater) => {
-          if (typeof updater === 'function') {
-            setNewTeamMember(prev => {
-              const updated = updater(prev);
-              return {
-                ...prev,
-                ...updated,
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Content</label>
+            <textarea
+              value={aboutData?.content || ''}
+              onChange={(e) => handleAboutDataChange('content', e.target.value)}
+              className="w-full p-3 border rounded-md"
+              rows={6}
+              placeholder="Enter main content..."
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Values</label>
+            <textarea
+              value={aboutData?.values || ''}
+              onChange={(e) => handleAboutDataChange('values', e.target.value)}
+              className="w-full p-3 border rounded-md"
+              rows={4}
+              placeholder="Enter company values..."
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">About Page Image</label>
+            {aboutData?.image_url ? (
+              <div className="relative">
+                <div className="w-64 h-48 rounded-md overflow-hidden border">
+                  <img 
+                    src={aboutData.image_url} 
+                    alt="About page preview"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-white"
+                  onClick={() => handleAboutDataChange('image_url', '')}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            ) : (
+              <div className="mt-2 flex justify-center px-6 pt-5 pb-6 border-2 border-dashed border-gray-300 rounded-md">
+                <div className="space-y-1 text-center">
+                  <div className="flex text-sm text-gray-600">
+                    <label
+                      htmlFor="about-image-upload"
+                      className="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none"
+                    >
+                      <span>Upload an image</span>
+                      <input
+                        id="about-image-upload"
+                        name="about-image-upload"
+                        type="file"
+                        className="sr-only"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                      />
+                    </label>
+                    <p className="pl-1">or drag and drop</p>
+                  </div>
+                  <p className="text-xs text-gray-500">PNG, JPG, GIF up to 5MB</p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-lg shadow p-6">
+        <h3 className="text-lg font-semibold mb-4">Team Members</h3>
+        <TeamMembersManager
+          teamMembers={teamMembers}
+          isAddingTeamMember={isAddingTeamMember}
+          newTeamMember={newTeamMember}
+          setIsAddingTeamMember={setIsAddingTeamMember}
+          setNewTeamMember={(updater) => {
+            if (typeof updater === 'function') {
+              setNewTeamMember(prev => {
+                const updated = updater(prev);
+                return {
+                  ...prev,
+                  ...updated,
+                  // Ensure we always have a valid image (either File or null)
+                  image: updated.image instanceof File ? updated.image : null
+                };
+              });
+            } else {
+              setNewTeamMember({
+                ...updater,
                 // Ensure we always have a valid image (either File or null)
-                image: updated.image instanceof File ? updated.image : null
-              };
-            });
-          } else {
-            setNewTeamMember({
-              ...updater,
-              // Ensure we always have a valid image (either File or null)
-              image: updater.image instanceof File ? updater.image : null
-            });
-          }
-        }}
-        onAddTeamMember={handleAddTeamMember}
-        onDeleteTeamMember={handleDeleteTeamMember}
-        onToggleTeamMember={handleTogglePublish}
-        onUpdateTeamMember={handleUpdateTeamMember}
-      />
+                image: updater.image instanceof File ? updater.image : null
+              });
+            }
+          }}
+          onAddTeamMember={handleAddTeamMember}
+          onDeleteTeamMember={handleDeleteTeamMember}
+          onToggleTeamMember={handleTogglePublish}
+          onUpdateTeamMember={handleUpdateTeamMember}
+        />
+      </div>
     </div>
   );
 };
 
-// Main component export
 export default AdminAboutManager;

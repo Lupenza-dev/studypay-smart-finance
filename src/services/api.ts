@@ -659,29 +659,24 @@ export const faqService = {
   }
 };
 
-// Interface for team member data
-export interface TeamMemberData {
-  id: number | string;
-  name: string;
-  position: string;
-  bio: string | null;
-  image_url: string | null;
-  is_published?: boolean;
-  isPublished?: boolean; // For backward compatibility
-}
-
 export const teamMemberService = {
   getAll: async (): Promise<TeamMemberData[]> => {
     try {
-      const response = await axios.get<TeamMemberData[]>(`${API_BASE_URL}/team-members`, {
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+      const response = await axios.get<{ success: boolean; data: TeamMemberData[]; message: string }>(
+        `${API_BASE_URL}/team-members`,
+        {
+          headers: {
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
         }
-      });
-      // Ensure we return properly typed data
-      const data = Array.isArray(response.data) ? response.data : [];
-      return data.map(member => ({
+      );
+      
+      // Extract the data array from the response
+      const responseData = response.data;
+      const teamMembers = Array.isArray(responseData.data) ? responseData.data : [];
+      
+      return teamMembers.map(member => ({
         ...member,
         // Ensure both is_published and isPublished are set for backward compatibility
         is_published: member.is_published ?? member.isPublished ?? false,
@@ -854,3 +849,64 @@ export const authService = {
     return !!localStorage.getItem('token');
   }
 };
+
+export const aboutService = {
+  get: async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/about-us`, {
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw new Error(error.response?.data?.message || 'Failed to fetch about data');
+      }
+      throw error;
+    }
+  },
+
+  update: async (data: {
+    vision: string;
+    mission: string;
+    content: string;
+    values: string;
+    image?: File;
+    _method?: string;
+  }) => {
+    try {
+      const formData = createFormData({
+        ...data,
+        _method: 'PUT'
+      });
+
+      const response = await axios.post(`${API_BASE_URL}/about-us/1`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error('Update about error:', error.response);
+        throw new Error(error.response?.data?.message || 'Failed to update about data');
+      }
+      throw new Error('An unexpected error occurred');
+    }
+  }
+};
+
+// Interface for team member data
+export interface TeamMemberData {
+  id: number | string;
+  name: string;
+  position: string;
+  bio: string | null;
+  image_url: string | null;
+  is_published?: boolean;
+  isPublished?: boolean; // For backward compatibility
+}
