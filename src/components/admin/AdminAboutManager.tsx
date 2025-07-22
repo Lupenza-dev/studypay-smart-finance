@@ -30,6 +30,14 @@ interface AboutSection {
   order: number;
 }
 
+interface NewTeamMemberData {
+  name: string;
+  position: string;
+  bio: string;
+  image: File | null;
+  isPublished: boolean;
+}
+
 const AdminAboutManager = () => {
   const [error, setError] = useState<Error | null>(null);
   const [aboutData, setAboutData] = useState<AboutData | null>(null);
@@ -44,6 +52,7 @@ const AdminAboutManager = () => {
     totalFunding: '$25M+',
     satisfactionRate: '98%'
   });
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [isAddingTeamMember, setIsAddingTeamMember] = useState(false);
   const [newTeamMember, setNewTeamMember] = useState<NewTeamMemberData>({
     name: '',
@@ -89,39 +98,23 @@ const AdminAboutManager = () => {
   const handleSave = async () => {
     if (!aboutData) return;
     
+    console.log('handleSave called');
     setIsSaving(true);
     try {
-      const formData = new FormData();
+      const { id, ...updateData } = aboutData;
+      console.log('About data to save:', { id, ...updateData });
       
-      // Add all about data to formData
-      Object.entries(aboutData).forEach(([key, value]) => {
-        // Skip null/undefined values and the image_url if it's a blob URL (temporary preview)
-        if (value != null && !(key === 'image_url' && typeof value === 'string' && value.startsWith('blob:'))) {
-          formData.append(key, value);
-        }
+      const response = await aboutService.update(id, {
+        vision: updateData.vision,
+        mission: updateData.mission,
+        content: updateData.content,
+        values: updateData.values,
+        image: imageFile,
       });
-
-      // Check if we have a file to upload
-      const fileInput = document.getElementById('about-image-upload') as HTMLInputElement;
-      if (fileInput?.files?.[0]) {
-        formData.append('image', fileInput.files[0]);
-      }
-
-      // Add _method=PUT for Laravel to recognize it as an update
-      formData.append('_method', 'PUT');
-
-      // Call the update endpoint
-      const response = await aboutService.update(aboutData.id, formData);
       
+      console.log('API response:', response);
       if (response.success) {
-        // Update the local state with the response data
-        setAboutData(prev => ({
-          ...prev,
-          ...response.data,
-          // Make sure to keep any local state that wasn't in the response
-          id: response.data.id || aboutData.id
-        }));
-        
+        setAboutData(prev => ({ ...prev, ...response.data }));
         toast({
           title: 'Success',
           description: 'About page updated successfully',
@@ -139,6 +132,11 @@ const AdminAboutManager = () => {
     } finally {
       setIsSaving(false);
     }
+  };
+
+  const handleRemoveImage = () => {
+    handleAboutDataChange('image_url', '');
+    setImageFile(null);
   };
 
   const handleAboutDataChange = (field: keyof AboutData, value: string | boolean) => {
@@ -296,28 +294,9 @@ const AdminAboutManager = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Create preview URL
+    setImageFile(file);
     const previewUrl = URL.createObjectURL(file);
-    
-    try {
-      // In a real implementation, you would upload the file to your server here
-      // and get back the image URL. For now, we'll just use the preview URL.
-      // Replace this with your actual file upload logic
-      // const formData = new FormData();
-      // formData.append('image', file);
-      // const response = await api.uploadImage(formData);
-      // const imageUrl = response.data.url;
-      
-      // For now, we'll use the preview URL
-      handleAboutDataChange('image_url', previewUrl);
-    } catch (error) {
-      console.error('Error uploading image:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to upload image',
-        variant: 'destructive',
-      });
-    }
+    handleAboutDataChange('image_url', previewUrl);
   };
 
   if (isLoading) {
@@ -409,7 +388,7 @@ const AdminAboutManager = () => {
                   variant="ghost"
                   size="icon"
                   className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-white"
-                  onClick={() => handleAboutDataChange('image_url', '')}
+                  onClick={handleRemoveImage}
                 >
                   <X className="h-4 w-4" />
                 </Button>
@@ -449,25 +428,7 @@ const AdminAboutManager = () => {
           isAddingTeamMember={isAddingTeamMember}
           newTeamMember={newTeamMember}
           setIsAddingTeamMember={setIsAddingTeamMember}
-          setNewTeamMember={(updater) => {
-            if (typeof updater === 'function') {
-              setNewTeamMember(prev => {
-                const updated = updater(prev);
-                return {
-                  ...prev,
-                  ...updated,
-                  // Ensure we always have a valid image (either File or null)
-                  image: updated.image instanceof File ? updated.image : null
-                };
-              });
-            } else {
-              setNewTeamMember({
-                ...updater,
-                // Ensure we always have a valid image (either File or null)
-                image: updater.image instanceof File ? updater.image : null
-              });
-            }
-          }}
+          setNewTeamMember={setNewTeamMember}
           onAddTeamMember={handleAddTeamMember}
           onDeleteTeamMember={handleDeleteTeamMember}
           onToggleTeamMember={handleTogglePublish}

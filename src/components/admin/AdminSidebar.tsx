@@ -31,7 +31,9 @@ const AdminSidebar = ({ isOpen, activeTab, setActiveTab, onLogout }: AdminSideba
     { id: 'testimonials', label: 'Testimonials', icon: Star },
     { id: 'faq', label: 'FAQ', icon: HelpCircle },
     { id: 'about', label: 'About Us', icon: Info },
+    { id: 'Corevalue', label: 'Core Values', icon: Globe },
     { id: 'settings', label: 'Settings', icon: Settings },
+
   ];
 
   return (

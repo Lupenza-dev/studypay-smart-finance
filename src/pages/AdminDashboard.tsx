@@ -32,6 +32,7 @@ import AdminAboutManager from '../components/admin/AdminAboutManager';
 import AdminSettingsManager from '../components/admin/AdminSettingsManager';
 import MinServicesManager from '../components/admin/MinServicesManager';
 import AdminSlidersManager from '../components/admin/AdminSlidersManager';
+import AdminCoreValueManager from '@/components/admin/AdminCoreValueManager';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -176,6 +177,9 @@ const AdminDashboard = () => {
 
             <TabsContent value="about">
               <AdminAboutManager />
+            </TabsContent>
+            <TabsContent value="Corevalue">
+              <AdminCoreValueManager />
             </TabsContent>
             
             <TabsContent value="settings">

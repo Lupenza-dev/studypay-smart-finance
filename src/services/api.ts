@@ -868,13 +868,12 @@ export const aboutService = {
     }
   },
 
-  update: async (data: {
+  update: async (id: number, data: {
     vision: string;
     mission: string;
     content: string;
     values: string;
     image?: File;
-    _method?: string;
   }) => {
     try {
       const formData = createFormData({
@@ -882,7 +881,7 @@ export const aboutService = {
         _method: 'PUT'
       });
 
-      const response = await axios.post(`${API_BASE_URL}/about-us/1`, formData, {
+      const response = await axios.post(`${API_BASE_URL}/about-us/${id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           'Accept': 'application/json',
@@ -910,3 +909,97 @@ export interface TeamMemberData {
   is_published?: boolean;
   isPublished?: boolean; // For backward compatibility
 }
+
+export const coreValueService = {
+  getAll: async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/core-values`, {
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw new Error(error.response?.data?.message || 'Failed to fetch Core Values');
+      }
+      throw error;
+    }
+  },
+  
+  create: async (data: {
+    title: string;
+    content: string;
+    image?: File;
+  }) => {
+    try {
+      const formData = createFormData({
+        ...data,
+        _method: 'POST'
+      });
+
+      const response = await axios.post(`${API_BASE_URL}/core-values`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.log(error.response);
+        throw new Error(error.response?.data?.message || 'Failed to create Core Values');
+      }
+      throw new Error('An unexpected error occurred');
+    }
+  },
+  
+  update: async (id: number, data: {
+    title: string;
+    content: string;
+    image?: File;
+    _method?: string;
+  }) => {
+    try {
+      const formData = createFormData({
+        ...data,
+        _method: 'PUT'
+      });
+
+      const response = await axios.post(`${API_BASE_URL}/core-values/${id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error('Update error:', error.response);
+        throw new Error(error.response?.data?.message || 'Failed to update core values');
+      }
+      throw new Error('An unexpected error occurred');
+    }
+  },
+  
+  delete: async (id: number) => {
+    try {
+      const response = await axios.delete(`${API_BASE_URL}/core-values/${id}`, {
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error('Delete error:', error.response);
+        throw new Error(error.response?.data?.message || 'Failed to delete core values');
+      }
+      throw new Error('An unexpected error occurred');
+    }
+  }
+};
