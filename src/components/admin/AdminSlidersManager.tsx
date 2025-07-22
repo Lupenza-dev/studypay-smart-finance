@@ -18,7 +18,7 @@ interface Slider {
   button_text: string;
   button_url: string;
   badge: string;
-  features: string[];
+  features: string;
   image_url: string;
   created_at: string;
   updated_at: string;
@@ -91,7 +91,7 @@ const AdminSlidersManager = () => {
           button_text: editingSlider.button_text || '',
           button_url: editingSlider.button_url || '',
           badge: editingSlider.badge || '',
-          features: Array.isArray(editingSlider.features) ? editingSlider.features.join('\n') : '',
+          features: editingSlider.features || '',
           featureInput: '',
           image: null,
           imagePreview: editingSlider.image_url || ''
@@ -234,7 +234,7 @@ const AdminSlidersManager = () => {
         button_text: formData.button_text,
         button_url: formData.button_url,
         badge: formData.badge,
-        features: formData.features.split('\n').filter(f => f.trim() !== ''),
+        features: formData.features,
         ...(formData.image && { image: formData.image })
       };
 
@@ -487,7 +487,7 @@ const AdminSlidersManager = () => {
                   </div>
                 )}
               </div>
-              <div className="space-y-2">
+              {/* <div className="space-y-2">
                 <Label>Features (One per line)</Label>
                 <div className="space-y-2">
                   <div className="flex space-x-2">
@@ -530,6 +530,15 @@ const AdminSlidersManager = () => {
                     </div>
                   )}
                 </div>
+              </div> */}
+              <div className="space-y-2">
+                <Label htmlFor="badge">Features</Label>
+                <Input
+                  id="features"
+                  value={formData.features}
+                  onChange={(e) => setFormData({ ...formData, features: e.target.value })}
+                  placeholder="e.g., New, Featured"
+                />
               </div>
             </div>
 

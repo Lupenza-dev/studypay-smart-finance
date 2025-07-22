@@ -457,13 +457,12 @@ export const sliderService = {
     button_text: string;
     button_url: string;
     badge: string;
-    features: string[];
+    features: string;
     image: File;
   }) => {
     try {
       const formData = createFormData({
         ...data,
-        features: JSON.stringify(data.features),
         _method: 'POST'
       });
 
@@ -998,6 +997,55 @@ export const coreValueService = {
       if (axios.isAxiosError(error)) {
         console.error('Delete error:', error.response);
         throw new Error(error.response?.data?.message || 'Failed to delete core values');
+      }
+      throw new Error('An unexpected error occurred');
+    }
+  }
+};
+
+export const homeAboutService = {
+  get: async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/home-about-us`, {
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw new Error(error.response?.data?.message || 'Failed to fetch about data');
+      }
+      throw error;
+    }
+  },
+
+  update: async (id: number, data: {
+    title: string;
+    content: string;
+    values: string;
+    badge: string;
+    image?: File;
+  }) => {
+    try {
+      const formData = createFormData({
+        ...data,
+        _method: 'PUT'
+      });
+
+      const response = await axios.post(`${API_BASE_URL}/home-about-us/${id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error('Update about error:', error.response);
+        throw new Error(error.response?.data?.message || 'Failed to update about data');
       }
       throw new Error('An unexpected error occurred');
     }
