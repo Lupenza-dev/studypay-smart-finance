@@ -33,7 +33,7 @@ const AdminSidebar = ({ isOpen, activeTab, setActiveTab, onLogout }: AdminSideba
     { id: 'about', label: 'About Us', icon: Info },
     { id: 'homeabout', label: 'Home About Us', icon: Info },
     { id: 'Corevalue', label: 'Core Values', icon: Globe },
-    { id: 'settings', label: 'Settings', icon: Settings },
+    // { id: 'settings', label: 'Settings', icon: Settings },
 
   ];
 
@@ -45,10 +45,10 @@ const AdminSidebar = ({ isOpen, activeTab, setActiveTab, onLogout }: AdminSideba
         <div className="p-4 border-b border-gray-200">
           <div className="flex items-center justify-between">
             {isOpen && (
-              <h2 className="text-xl font-bold text-purple-600">Eldizer Finance</h2>
+              <h2 className="text-xl font-bold text-[#DF412D]">Eldizer Finance</h2>
             )}
             {!isOpen && (
-              <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-[#DF412D] rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-sm">EF</span>
               </div>
             )}
@@ -65,7 +65,7 @@ const AdminSidebar = ({ isOpen, activeTab, setActiveTab, onLogout }: AdminSideba
                     variant={activeTab === item.id ? "default" : "ghost"}
                     className={`w-full justify-start ${
                       activeTab === item.id 
-                        ? 'bg-purple-600 text-white' 
+                        ? 'bg-[#DF412D] text-white' 
                         : 'text-gray-700 hover:bg-gray-100'
                     } ${!isOpen ? 'px-2' : ''}`}
                     onClick={() => setActiveTab(item.id)}

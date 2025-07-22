@@ -36,7 +36,7 @@ const AdminHeader = ({ isSidebarOpen, setSidebarOpen }: AdminHeaderProps) => {
           </Button>
           
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center">
+            <div className="w-8 h-8 bg-[#DF412D] rounded-full flex items-center justify-center">
               <span className="text-white text-sm font-medium">A</span>
             </div>
             <span className="text-sm font-medium">Admin</span>
