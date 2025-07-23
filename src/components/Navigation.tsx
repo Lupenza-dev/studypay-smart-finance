@@ -30,7 +30,7 @@ const Navigation = () => {
           <nav className="hidden md:flex space-x-8">
             <button onClick={() => handleNavigation('/')} className="text-gray-700 hover:text-purple-600 transition-colors font-medium">Home</button>
             <button onClick={() => handleNavigation('/about')} className="text-gray-700 hover:text-purple-600 transition-colors font-medium">About Us</button>
-            <button onClick={() => handleNavigation('/services')} className="text-gray-700 hover:text-purple-600 transition-colors font-medium">Services</button>
+            {/* <button onClick={() => handleNavigation('/services')} className="text-gray-700 hover:text-purple-600 transition-colors font-medium">Services</button> */}
             <button onClick={() => handleNavigation('/news')} className="text-gray-700 hover:text-purple-600 transition-colors font-medium">News</button>
             <button onClick={() => handleNavigation('/faq')} className="text-gray-700 hover:text-purple-600 transition-colors font-medium">FAQ</button>
             <button onClick={() => handleNavigation('/contact')} className="text-gray-700 hover:text-purple-600 transition-colors font-medium">Contact Us</button>

@@ -1,7 +1,7 @@
 
 import { Shield, Zap, Heart, Calendar } from 'lucide-react';
 
-const WhyChooseUs = () => {
+const WhyChooseUs = ({ minServicesData }: { minServicesData: any[] }) => {
   const benefits = [
     {
       icon: Shield,
@@ -46,14 +46,14 @@ const WhyChooseUs = () => {
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {benefits.map((benefit, index) => (
+          {minServicesData.map((service, index) => (
             <div key={index} className="text-center group">
               <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 hover:bg-white/20 transition-all duration-300">
                 <div className="mx-auto bg-white text-purple-600 w-16 h-16 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                  <benefit.icon size={32} />
+                  <service.icon size={32} />
                 </div>
-                <h3 className="text-xl font-bold mb-4">{benefit.title}</h3>
-                <p className="text-blue-100 mb-6 leading-relaxed">{benefit.description}</p>
+                <h3 className="text-xl font-bold mb-4">{service.title}</h3>
+                <p className="text-blue-100 mb-6 leading-relaxed">{service.content}</p>
               </div>
             </div>
           ))}

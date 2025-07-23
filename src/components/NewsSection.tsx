@@ -3,8 +3,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 
-const NewsSection = () => {
-  const navigate = useNavigate();
+const NewsSection = ({ eventData }: { eventData: any[] }) => {
+  const navigate = useNavigate(); 
 
   const latestNews = [
     {
@@ -46,41 +46,44 @@ const NewsSection = () => {
         </div>
 
         <div className="grid md:grid-cols-3 gap-8">
-          {latestNews.map((article) => (
-            <Card key={article.id} className="overflow-hidden hover:shadow-lg transition-shadow bg-white cursor-pointer">
-              <div 
-                className="aspect-video overflow-hidden"
-                onClick={() => navigate(`/news/${article.id}`)}
-              >
-                <img 
-                  src={article.image} 
-                  alt={article.title}
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                />
-              </div>
-              <CardHeader>
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm bg-purple-100 text-purple-700 px-2 py-1 rounded">
-                    {article.category}
-                  </span>
-                  <span className="text-sm text-gray-500">{article.date}</span>
-                </div>
-                <CardTitle className="text-xl leading-tight">{article.title}</CardTitle>
-                <CardDescription className="text-gray-600">
-                  {article.excerpt}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button 
-                  variant="outline" 
-                  className="w-full"
+          {(eventData || []).map((article) => {
+           
+            return (
+              <Card key={article.id} className="overflow-hidden hover:shadow-lg transition-shadow bg-white cursor-pointer">
+                <div 
+                  className="aspect-video overflow-hidden"
                   onClick={() => navigate(`/news/${article.id}`)}
                 >
-                  Read More
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
+                  <img 
+                    src={article.image || article.image_url} 
+                    alt={article.title}
+                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
+                <CardHeader>
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-sm bg-purple-100 text-purple-700 px-2 py-1 rounded">
+                      {typeof article.category === 'object' && article.category !== null ? article.category.name : article.category}
+                    </span>
+                    <span className="text-sm text-gray-500">{article.created_at || article.created_at}</span>
+                  </div>
+                  <CardTitle className="text-xl leading-tight">{article.title}</CardTitle>
+                  <CardDescription className="text-gray-600 line-clamp-4">
+                    {article.content}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Button 
+                    variant="outline" 
+                    className="w-full"
+                    onClick={() => navigate(`/news/${article.id}`)}
+                  >
+                    Read More
+                  </Button>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
 
         <div className="text-center mt-12">

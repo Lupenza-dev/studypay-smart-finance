@@ -2,7 +2,7 @@
 import { Star } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 
-const Testimonials = () => {
+const Testimonials = ({ testmonialData }: { testmonialData: any[] }) => {
   const testimonials = [
     {
       name: "Sarah Johnson",
@@ -32,15 +32,15 @@ const Testimonials = () => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-800 mb-4">
-            What Students Are Saying
+            What people Are Saying
           </h2>
           <p className="text-xl text-gray-600">
-            Real stories from students who've succeeded with Eldizer-Finance
+            Real stories from peoples who've succeeded with Eldizer-Finance
           </p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-8">
-          {testimonials.map((testimonial, index) => (
+          {testmonialData.map((testimonial, index) => (
             <Card key={index} className="hover:shadow-xl transition-shadow duration-300">
               <CardContent className="p-6">
                 <div className="flex items-center mb-4">
@@ -49,17 +49,17 @@ const Testimonials = () => {
                   ))}
                 </div>
                 <p className="text-gray-600 mb-6 italic leading-relaxed">
-                  "{testimonial.text}"
+                  "{testimonial.content}"
                 </p>
                 <div className="flex items-center">
                   <img
-                    src={testimonial.image}
+                    src={testimonial.image_url}
                     alt={testimonial.name}
                     className="w-12 h-12 rounded-full mr-4"
                   />
                   <div>
                     <div className="font-semibold text-gray-800">{testimonial.name}</div>
-                    <div className="text-sm text-gray-500">{testimonial.university}</div>
+                    <div className="text-sm text-gray-500">{testimonial.position}</div>
                   </div>
                 </div>
               </CardContent>

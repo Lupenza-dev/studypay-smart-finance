@@ -4,8 +4,62 @@ import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Users, Target, Award, Heart, CheckCircle } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { websiteService } from '@/services/api';
+import { useToast } from '@/hooks/use-toast';
+
+interface AboutData {
+  vision: string; 
+  mission: string;
+  content: string;
+  all_values: [];
+  image_url?: string;
+}
+interface CoreValueData {
+  icon: string; 
+  name: string;
+  content: string;
+}
+interface TeamMemberData {
+  name: string; 
+  position: string;
+  bio: string;
+  image_url: string;
+}
 
 const About = () => {
+   const [aboutUs,setAboutUs] =useState<AboutData | null>(null);
+   const [coreValues,setCoreValues] =useState<CoreValueData []>([]);
+   const [teamMembers,setTeamMembers] =useState<TeamMemberData []>([]);
+
+   const {toast} =useToast();
+   const fetchAboutUs = async () => {
+    try {
+      const response = await websiteService.getAboutUs();
+      setAboutUs(response.about);
+      setCoreValues(response.core_values);
+      setTeamMembers(response.team_members);
+    } catch (error) {
+      console.error('Error fetching services:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : 'Failed to load services',
+        variant: "destructive",
+      });
+    } finally {
+      //setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAboutUs();
+  }, []);
+
+  if (!aboutUs) {
+    return null;
+  }
+
+
   const values = [
     {
       icon: Heart,
@@ -82,35 +136,22 @@ const About = () => {
             <div>
               <h2 className="text-4xl font-bold text-gray-800 mb-6">Who We Are</h2>
               <p className="text-lg text-gray-600 mb-6 leading-relaxed">
-              El-dizer financial service is only financial service (fintech) in Tanzania that serves scholar from different higher learning institution as well as public servant to get access over a number of credit facilities so that they can simplify their day to day demands and wants through digital platform such as application, website and social media
+              {aboutUs.content}
               </p>
-              {/* <p className="text-lg text-gray-600 leading-relaxed">
-                In 2019, we set out to change this narrative. We created a company that truly understands student life – 
-                the irregular income, the tight budgets, the timing mismatches between expenses and financial aid. 
-                Today, we're proud to serve over 50,000 students nationwide.
-              </p> */}
                <div className="space-y-4">
-              <div className="flex items-center space-x-3">
-                <CheckCircle className="text-green-500" size={24} />
-                <span className="text-gray-700">Digital Accessibility and Convenience</span>
-              </div>
-              <div className="flex items-center space-x-3">
-                <CheckCircle className="text-green-500" size={24} />
-                <span className="text-gray-700">Transparent and Fair Practices</span>
-              </div>
-              <div className="flex items-center space-x-3">
-                <CheckCircle className="text-green-500" size={24} />
-                <span className="text-gray-700">Fast Approval and Disbursement</span>
-              </div>
-              <div className="flex items-center space-x-3">
-                <CheckCircle className="text-green-500" size={24} />
-                <span className="text-gray-700">Customer Support and Relationship Management</span>
-              </div>
+             {
+                aboutUs.all_values.map((value: string, idx: number) => (
+                  <div key={idx} className="flex items-center space-x-3">
+                    <CheckCircle className="text-green-500" size={24} />
+                    <span className="text-gray-700">{value}</span>
+                  </div>
+                ))
+              }
             </div>
             </div>
             <div>
               <img 
-                src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=800&q=80" 
+                src={aboutUs.image_url} 
                 alt="Students collaborating"
                 className="rounded-2xl shadow-xl"
               />
@@ -132,7 +173,7 @@ const About = () => {
               </CardHeader>
               <CardContent>
                 <p className="text-lg text-gray-600 leading-relaxed">
-                To walk along with scholars and public servant in day to day manner, providing services that enrich their livelihood
+                {aboutUs.mission}
                 </p>
               </CardContent>
             </Card>
@@ -142,7 +183,7 @@ const About = () => {
               </CardHeader>
               <CardContent>
                 <p className="text-lg text-gray-600 leading-relaxed">
-                To be one of the outstanding financial company that can solve financial challenge from university student, graduate, entrepreneur as well as public servant
+                {aboutUs.vision}
                 </p>
               </CardContent>
             </Card>
@@ -158,16 +199,16 @@ const About = () => {
             <p className="text-xl text-gray-600">Facilitating self-reliance through accessible and empowering financial solutions.</p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {values.map((value, index) => (
+            {coreValues.map((value, index) => (
               <Card key={index} className="text-center hover:shadow-lg transition-shadow">
                 <CardHeader>
                   <div className="mx-auto bg-gradient-to-r from-[#df412d] to-[#df412d] text-white w-16 h-16 rounded-full flex items-center justify-center mb-4">
                     <value.icon size={32} />
                   </div>
-                  <CardTitle className="text-xl">{value.title}</CardTitle>
+                  <CardTitle className="text-xl">{value.name}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-gray-600">{value.description}</p>
+                  <p className="text-gray-600">{value.content}</p>
                 </CardContent>
               </Card>
             ))}
@@ -180,19 +221,19 @@ const About = () => {
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-800 mb-4">Our Leadership Team</h2>
-            <p className="text-xl text-gray-600">Experienced leaders dedicated to student success</p>
+            <p className="text-xl text-gray-600">Experienced leaders dedicated to our success</p>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
-            {team.map((member, index) => (
+            {teamMembers.map((member, index) => (
               <Card key={index} className="text-center hover:shadow-lg transition-shadow">
                 <CardHeader>
                   <img 
-                    src={member.image} 
+                    src={member.image_url} 
                     alt={member.name}
                     className="w-32 h-32 mx-auto rounded-full object-cover mb-4"
                   />
                   <CardTitle className="text-xl">{member.name}</CardTitle>
-                  <CardDescription className="text-[#df412d] font-semibold">{member.role}</CardDescription>
+                  <CardDescription className="text-[#df412d] font-semibold">{member.position}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-600">{member.bio}</p>

@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 
-const Services = () => {
+const Services = ({ serviceData }: { serviceData: any[] }) => {
   const navigate = useNavigate();
 
   const services = [
@@ -52,7 +52,7 @@ const Services = () => {
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {services.map((service, index) => (
+          {serviceData.map((service, index) => (
             <Card key={index} className="hover:shadow-xl transition-shadow duration-300 border-t-4 border-t-[#df412d]">
               <CardHeader className="text-center">
                 <div className="mx-auto bg-gradient-to-r from-[#df412d] to-[#df412d] text-white w-16 h-16 rounded-full flex items-center justify-center mb-4">
@@ -60,7 +60,7 @@ const Services = () => {
                 </div>
                 <CardTitle className="text-xl text-gray-800">{service.title}</CardTitle>
                 <CardDescription className="text-gray-600">
-                  {service.description}
+                  {service.content}
                 </CardDescription>
               </CardHeader>
               <CardContent>

@@ -8,7 +8,7 @@ const Newsletter = () => {
       <div className="container mx-auto px-4 text-center">
         <div className="max-w-2xl mx-auto">
           <h2 className="text-3xl font-bold mb-4">
-            Stay Smart About Student Financial Service
+            Stay Smart About Eldizer Financial Service
           </h2>
           <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
             <Input

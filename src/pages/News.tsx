@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import TopHeader from '../components/TopHeader';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
@@ -6,10 +6,44 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useNavigate } from 'react-router-dom';
+import { useToast } from '@/hooks/use-toast';
+import { websiteService } from '@/services/api';
+
+interface NewsData {
+  id: number;
+  title: string; 
+  content: string;
+  image_url?: string;
+  category: string;
+  created_at: Date,
+}
 
 const News = () => {
+  const [newsEventData, setNewsEventData] = useState<NewsData []>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
+
+  const {toast} =useToast();
+
+   const fetchNews = async () => {
+    try {
+      const response = await websiteService.getNews();
+      setNewsEventData(response.news);
+    } catch (error) {
+      console.error('Error fetching news:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : 'Failed to load news',
+        variant: "destructive",
+      });
+    } finally {
+      //setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchNews();
+  }, []);
 
   const newsArticles = [
     {
@@ -51,6 +85,8 @@ const News = () => {
     article.excerpt.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  console.log(newsEventData);
+
   return (
     <div className="min-h-screen">
       <TopHeader />
@@ -78,14 +114,14 @@ const News = () => {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredArticles.map((article) => (
+            {newsEventData.map((article) => (
               <Card key={article.id} className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
                 <div 
                   className="aspect-video overflow-hidden"
                   onClick={() => navigate(`/news/${article.id}`)}
                 >
                   <img 
-                    src={article.image} 
+                    src={article.image_url} 
                     alt={article.title}
                     className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                   />
@@ -93,13 +129,19 @@ const News = () => {
                 <CardHeader>
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-sm bg-purple-100 text-purple-700 px-2 py-1 rounded">
-                      {article.category}
+                      {typeof article.category === 'object' && article.category !== null ? article.category.name : article.category}
                     </span>
-                    <span className="text-sm text-gray-500">{article.date}</span>
+                    {/* <span className="text-sm text-gray-500">{article.created_at}</span> */}
+                    <span className="text-sm text-gray-500">
+                      {article.created_at ? new Date(article.created_at).toLocaleDateString() : ''}
+                    </span>
+
                   </div>
-                  <CardTitle className="text-xl">{article.title}</CardTitle>
-                  <CardDescription className="text-gray-600">
-                    {article.excerpt}
+                  <CardTitle className="text-xl">
+                    {typeof article.title === 'string' ? article.title : JSON.stringify(article.title)}
+                  </CardTitle>
+                  <CardDescription className="text-gray-600 line-clamp-4">
+                    {typeof article.content === 'string' ? article.content : JSON.stringify(article.content)}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>

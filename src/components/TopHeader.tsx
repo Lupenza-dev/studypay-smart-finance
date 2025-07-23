@@ -8,7 +8,7 @@ const TopHeader = () => {
         <div className="flex flex-col sm:flex-row space-y-1 sm:space-y-0 sm:space-x-6 text-center sm:text-left">
           <div className="flex items-center justify-center sm:justify-start space-x-2">
             <Mail size={14} />
-            <span>info@wldizerfinance.co.tz</span>
+            <span>info@eldizerfinance.co.tz</span>
           </div>
           <div className="flex items-center justify-center sm:justify-start space-x-2">
             <MapPin size={14} />

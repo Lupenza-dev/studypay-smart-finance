@@ -1089,5 +1089,39 @@ export const websiteService = {
       throw error;
     }
   },
+
+  getAboutUs: async () => {
+    try {
+      const response = await axios.get(`${API_WEB_BASE_URL}/about-us`, {
+        headers: {
+          'Accept': 'application/json',
+          // 'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw new Error(error.response?.data?.message || 'Failed to fetch About');
+      }
+      throw error;
+    }
+  },
+
+  getNews: async () => {
+    try {
+      const response = await axios.get(`${API_WEB_BASE_URL}/get-news`, {
+        headers: {
+          'Accept': 'application/json',
+          // 'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw new Error(error.response?.data?.message || 'Failed to fetch About');
+      }
+      throw error;
+    }
+  },
  
 };
