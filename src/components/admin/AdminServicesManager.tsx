@@ -15,6 +15,7 @@ interface Service {
   id: number;
   title: string;
   content: string;
+  icon: string;
   image_url?: string;
   created_at: string;
   updated_at: string;
@@ -23,6 +24,7 @@ interface Service {
 interface FormData {
   title: string;
   content: string;
+  icon: string;
   image: File | null;
   imagePreview: string;
 }
@@ -38,6 +40,7 @@ const AdminServicesManager = () => {
   const [formData, setFormData] = useState<FormData>({
     title: '',
     content: '',
+    icon: '',
     image: null,
     imagePreview: ''
   });
@@ -72,6 +75,7 @@ const AdminServicesManager = () => {
       setFormData({
         title: editingService.title,
         content: editingService.content,
+        icon: editingService.icon,
         image: null,
         imagePreview: editingService.image_url || ''
       });
@@ -79,6 +83,7 @@ const AdminServicesManager = () => {
       setFormData({
         title: '',
         content: '',
+        icon: '',
         image: null,
         imagePreview: ''
       });
@@ -168,6 +173,7 @@ const AdminServicesManager = () => {
       const serviceData = {
         title: formData.title,
         content: formData.content,
+        icon: formData.icon,
         ...(formData.image && { image: formData.image })
       };
 
@@ -234,6 +240,7 @@ const AdminServicesManager = () => {
               <TableHeader>
                 <TableRow>
                   <TableHead>Title</TableHead>
+                  <TableHead>Icon</TableHead>
                   <TableHead>Content</TableHead>
                   <TableHead>Image</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
@@ -243,9 +250,13 @@ const AdminServicesManager = () => {
                 {services.map((service) => (
                   <TableRow key={service.id}>
                     <TableCell className="font-medium">{service.title}</TableCell>
+                    <TableCell className="font-medium">{service.icon}</TableCell>
                     <TableCell className="max-w-[300px] line-clamp-2">
                       {service.content}
                     </TableCell>
+                    {/* <TableCell className="max-w-[300px] line-clamp-2">
+                      {service.icon}
+                    </TableCell> */}
                     <TableCell>
                       {service.image_url && (
                         <div className="w-16 h-16 rounded-md overflow-hidden border">
@@ -311,6 +322,15 @@ const AdminServicesManager = () => {
                   placeholder="Enter service title" 
                   value={formData.title}
                   onChange={(e) => setFormData({...formData, title: e.target.value})}
+                />
+              </div>
+              <div>
+                <Label htmlFor="title">Icon *</Label>
+                <Input 
+                  id="icon" 
+                  placeholder="Enter service icon" 
+                  value={formData.icon}
+                  onChange={(e) => setFormData({...formData, icon: e.target.value})}
                 />
               </div>
               <div>

@@ -36,7 +36,7 @@ const Navigation = () => {
             <button onClick={() => handleNavigation('/contact')} className="text-gray-700 hover:text-purple-600 transition-colors font-medium">Contact Us</button>
           </nav>
 
-          <Button className="hidden md:block bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-sm">
+          <Button className="hidden md:block bg-gradient-to-r from-[#df412d] to-[#df412d] hover:from-[#262F3B] hover:to-[#262F3B] text-sm">
             Get Started
           </Button>
 

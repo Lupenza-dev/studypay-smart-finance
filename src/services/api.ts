@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 const API_BASE_URL = 'https://api.eldizerfinance.co.tz/api';
+const API_WEB_BASE_URL = 'https://api.eldizerfinance.co.tz/api/website';
 
 interface LoginCredentials {
   email: string;
@@ -139,6 +140,7 @@ export const servicesService = {
   create: async (data: {
     title: string;
     content: string;
+    icon: string;
     image?: File;
   }) => {
     try {
@@ -167,6 +169,7 @@ export const servicesService = {
   update: async (id: number, data: {
     title: string;
     content: string;
+    icon: string;
     image?: File;
     _method?: string;
   }) => {
@@ -175,7 +178,6 @@ export const servicesService = {
         ...data,
         _method: 'PUT'
       });
-
       const response = await axios.post(`${API_BASE_URL}/services/${id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -1050,4 +1052,42 @@ export const homeAboutService = {
       throw new Error('An unexpected error occurred');
     }
   }
+};
+
+//website
+export const websiteService = {
+  getHome: async () => {
+    try {
+      const response = await axios.get(`${API_WEB_BASE_URL}/home`, {
+        headers: {
+          'Accept': 'application/json',
+          // 'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw new Error(error.response?.data?.message || 'Failed to Home Data');
+      }
+      throw error;
+    }
+  },
+
+  getMinService: async () => {
+    try {
+      const response = await axios.get(`${API_WEB_BASE_URL}/get-min-service`, {
+        headers: {
+          'Accept': 'application/json',
+          // 'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw new Error(error.response?.data?.message || 'Failed to fetch Min-service');
+      }
+      throw error;
+    }
+  },
+ 
 };

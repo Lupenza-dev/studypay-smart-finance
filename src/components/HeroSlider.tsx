@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 
-const HeroSlider = () => {
+const HeroSlider = ({ sliderImages }: { sliderImages: any[] }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const slides = [
@@ -40,6 +40,10 @@ const HeroSlider = () => {
     return () => clearInterval(timer);
   }, [slides.length]);
 
+  if (!sliderImages || sliderImages.length === 0 || !sliderImages[currentSlide]) {
+    return null; // or a loading spinner, or fallback UI
+  }
+
   const goToSlide = (index: number) => {
     setCurrentSlide(index);
   };
@@ -60,20 +64,20 @@ const HeroSlider = () => {
             <div className="space-y-4">
               <h1 className="text-5xl md:text-6xl font-bold leading-tight">
                 <span className="block transition-all duration-500">
-                  {slides[currentSlide].title}
+                  {sliderImages[currentSlide].title_slider}
                 </span>
                 <span className="block text-[#df412d] transition-all duration-500">
-                  {slides[currentSlide].subtitle}
+                  {sliderImages[currentSlide].title_slider_sub}
                 </span>
               </h1>
               <p className="text-xl text-blue-100 leading-relaxed transition-all duration-500">
-                {slides[currentSlide].description}
+                {sliderImages[currentSlide].subtitle}
               </p>
             </div>
             
             <div className="flex flex-col sm:flex-row gap-4">
               <Button size="lg" className="bg-[#df412d] text-white hover:bg-[#262E3A] font-semibold px-8 py-6 text-lg">
-                Get Started
+              {sliderImages[currentSlide].button_text}
               </Button>
               {/* <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-purple-600 px-8 py-6 text-lg">
                 Learn More
@@ -81,7 +85,15 @@ const HeroSlider = () => {
             </div>
             
             <div className="flex items-center space-x-8 text-sm">
-              <div className="flex items-center space-x-2">
+              {
+                sliderImages[currentSlide].all_features.map((feature: any) => (
+                  <div className="flex items-center space-x-2">
+                    <div className="w-3 h-3 bg-green-400 rounded-full"></div>
+                    <span>{feature}</span>
+                  </div>
+                ))
+              }
+              {/* <div className="flex items-center space-x-2">
                 <div className="w-3 h-3 bg-green-400 rounded-full"></div>
                 <span>No Hidden Fees</span>
               </div>
@@ -92,22 +104,22 @@ const HeroSlider = () => {
               <div className="flex items-center space-x-2">
                 <div className="w-3 h-3 bg-green-400 rounded-full"></div>
                 <span>Student-Friendly</span>
-              </div>
+              </div> */}
             </div>
           </div>
           
           <div className="relative">
             <div className="relative overflow-hidden rounded-2xl">
               <img 
-                src={slides[currentSlide].image}
+                src={sliderImages[currentSlide].image_url}
                 alt="Student studying"
                 className="w-full h-[400px] object-cover transition-all duration-700 shadow-2xl"
               />
             </div>
             
             <div className="absolute -bottom-6 -left-6 bg-white text-purple-600 p-6 rounded-xl shadow-lg transition-all duration-500">
-              <div className="text-2xl font-bold">{slides[currentSlide].stats}</div>
-              <div className="text-sm">{slides[currentSlide].statsLabel}</div>
+              <div className="text-2xl font-bold">{sliderImages[currentSlide].badge_1}</div>
+              <div className="text-sm">{sliderImages[currentSlide].badge_2}</div>
             </div>
           </div>
         </div>
