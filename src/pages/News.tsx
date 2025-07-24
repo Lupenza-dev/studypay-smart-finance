@@ -5,7 +5,7 @@ import Footer from '../components/Footer';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { websiteService } from '@/services/api';
 
@@ -118,7 +118,7 @@ const News = () => {
               <Card key={article.id} className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
                 <div 
                   className="aspect-video overflow-hidden"
-                  onClick={() => navigate(`/news/${article.id}`)}
+                  onClick={() => navigate(`/news/${article.id}`, { state: { article } })}
                 >
                   <img 
                     src={article.image_url} 
@@ -148,7 +148,7 @@ const News = () => {
                   <Button 
                     variant="outline" 
                     className="w-full"
-                    onClick={() => navigate(`/news/${article.id}`)}
+                    onClick={() => navigate(`/news/${article.id}`, { state: { article } })}
                   >
                     Read More
                   </Button>

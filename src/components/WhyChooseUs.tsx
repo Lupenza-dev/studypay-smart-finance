@@ -2,6 +2,26 @@
 import { Shield, Zap, Heart, Calendar } from 'lucide-react';
 
 const WhyChooseUs = ({ minServicesData }: { minServicesData: any[] }) => {
+  const SvgIcon = ({ svgString }) => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(svgString, 'image/svg+xml');
+    const svgElement = doc.querySelector('svg');
+    
+    if (!svgElement) return null;
+    
+    // Extract attributes and convert to React props
+    const props = {};
+    for (let attr of svgElement.attributes) {
+      const propName = attr.name === 'class' ? 'className' : attr.name;
+      props[propName] = attr.value;
+    }
+    
+    return (
+      <svg {...props}>
+        <g dangerouslySetInnerHTML={{ __html: svgElement.innerHTML }} />
+      </svg>
+    );
+  };
   const benefits = [
     {
       icon: Shield,
@@ -49,8 +69,9 @@ const WhyChooseUs = ({ minServicesData }: { minServicesData: any[] }) => {
           {minServicesData.map((service, index) => (
             <div key={index} className="text-center group">
               <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 hover:bg-white/20 transition-all duration-300">
-                <div className="mx-auto bg-white text-purple-600 w-16 h-16 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                  <service.icon size={32} />
+                <div className="mx-auto bg-white text-purple-600 w-16 h-16 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform px-1 py-1">
+                  {/* <service.icon size={32} /> */}
+                  <SvgIcon svgString={service.icon} />
                 </div>
                 <h3 className="text-xl font-bold mb-4">{service.title}</h3>
                 <p className="text-blue-100 mb-6 leading-relaxed">{service.content}</p>

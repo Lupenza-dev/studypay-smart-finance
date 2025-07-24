@@ -7,6 +7,27 @@ import { useNavigate } from 'react-router-dom';
 const Services = ({ serviceData }: { serviceData: any[] }) => {
   const navigate = useNavigate();
 
+  const SvgIcon = ({ svgString }) => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(svgString, 'image/svg+xml');
+    const svgElement = doc.querySelector('svg');
+    
+    if (!svgElement) return null;
+    
+    // Extract attributes and convert to React props
+    const props = {};
+    for (let attr of svgElement.attributes) {
+      const propName = attr.name === 'class' ? 'className' : attr.name;
+      props[propName] = attr.value;
+    }
+    
+    return (
+      <svg {...props}>
+        <g dangerouslySetInnerHTML={{ __html: svgElement.innerHTML }} />
+      </svg>
+    );
+  };
+
   const services = [
     {
       icon: Book,
@@ -55,9 +76,10 @@ const Services = ({ serviceData }: { serviceData: any[] }) => {
           {serviceData.map((service, index) => (
             <Card key={index} className="hover:shadow-xl transition-shadow duration-300 border-t-4 border-t-[#df412d]">
               <CardHeader className="text-center">
-                <div className="mx-auto bg-gradient-to-r from-[#df412d] to-[#df412d] text-white w-16 h-16 rounded-full flex items-center justify-center mb-4">
-                  <service.icon size={32} />
-                </div>
+              <div className="mx-auto bg-gradient-to-r from-[#df412d] to-[#df412d] text-white w-16 h-16 rounded-full flex items-center justify-center mb-4">
+                {/* <div dangerouslySetInnerHTML={{ __html: service.icon as string }} /> */}
+                <SvgIcon svgString={service.icon} />
+              </div>
                 <CardTitle className="text-xl text-gray-800">{service.title}</CardTitle>
                 <CardDescription className="text-gray-600">
                   {service.content}

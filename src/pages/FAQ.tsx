@@ -1,85 +1,56 @@
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import TopHeader from '../components/TopHeader';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { useToast } from '@/hooks/use-toast';
+import { websiteService } from '@/services/api';
+import { useNavigate } from 'react-router-dom';
+
+interface FaqData{
+  id:number;
+  title: string;
+  content: string;
+  category_name: string;
+}
 
 const FAQ = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [openFAQ, setOpenFAQ] = useState<number | null>(null);
+  const [faqCategories, setFaqCategories] = useState<FaqData []>([]);
 
-  const faqData = [
-    {
-      id: 1,
-      category: "Getting Started",
-      question: "How do I apply for Eldizer Finance payment plans?",
-      answer: "Applying is simple! Click the 'Apply Now' button, fill out our quick application form, and you'll receive approval status within minutes. No lengthy paperwork or complex procedures required."
-    },
-    {
-      id: 2,
-      category: "Getting Started",
-      question: "What documents do I need to apply?",
-      answer: "You'll need your student ID, enrollment verification, and basic personal information. For some plans, we may also ask for income verification or a co-signer."
-    },
-    {
-      id: 3,
-      category: "Payment Plans",
-      question: "What types of payment plans do you offer?",
-      answer: "We offer flexible monthly, quarterly, and semester-based payment plans. You can split your tuition, textbooks, housing costs, and other education expenses into manageable payments that align with your academic calendar."
-    },
-    {
-      id: 4,
-      category: "Payment Plans",
-      question: "Are there any fees or interest charges?",
-      answer: "We believe in transparency. Some plans may have minimal processing fees, but we never charge hidden fees. Interest rates, if applicable, are clearly disclosed upfront and are competitive with industry standards."
-    },
-    {
-      id: 5,
-      category: "Eligibility",
-      question: "Who is eligible for Eldizer Finance payment plans?",
-      answer: "Current students enrolled in accredited institutions are eligible. We welcome undergraduate, graduate, and professional students. International students may also qualify with additional documentation."
-    },
-    {
-      id: 6,
-      category: "Eligibility",
-      question: "Do I need good credit to qualify?",
-      answer: "Not necessarily! We consider various factors beyond credit scores, including enrollment status, academic progress, and future earning potential. Students with limited credit history are encouraged to apply."
-    },
-    {
-      id: 7,
-      category: "Account Management",
-      question: "How do I make payments?",
-      answer: "You can make payments through our secure online portal, mobile app, automatic bank transfers, or by phone. We send reminders before each payment is due."
-    },
-    {
-      id: 8,
-      category: "Account Management",
-      question: "What happens if I miss a payment?",
-      answer: "We understand student life can be unpredictable. If you miss a payment, contact us immediately. We offer grace periods and can work with you to adjust your payment schedule if needed."
-    },
-    {
-      id: 9,
-      category: "Support",
-      question: "How can I get help if I have issues?",
-      answer: "Our student support team is available Monday-Friday 8 AM to 8 PM EST. You can reach us by phone, email, or live chat. We also have an extensive help center with guides and tutorials."
-    },
-    {
-      id: 10,
-      category: "Support",
-      question: "Can I change my payment plan after I've started?",
-      answer: "Yes, in many cases you can modify your payment plan. Contact our support team to discuss your options. We're here to work with you as your financial situation changes."
+  const {toast} =useToast();
+  const navigate = useNavigate(); 
+
+  const fetchfaq = async () => {
+    try {
+      const response = await websiteService.getFaqs();
+      setFaqCategories(response.faqs);
+    } catch (error) {
+      console.error('Error fetching faq:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : 'Failed to load faq',
+        variant: "destructive",
+      });
+    } finally {
+      //setIsLoading(false);
     }
-  ];
+  };
 
-  const filteredFAQs = faqData.filter(faq =>
-    faq.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    faq.answer.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    faq.category.toLowerCase().includes(searchTerm.toLowerCase())
+  useEffect(() => {
+    fetchfaq();
+  }, []);
+
+  const filteredFAQs = faqCategories.filter(faq =>
+    faq.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    faq.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    faq.category_name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const categories = [...new Set(faqData.map(faq => faq.category))];
+  const categories = [...new Set(faqCategories.map(faq => faq.category_name))];
 
   const toggleFAQ = (id: number) => {
     setOpenFAQ(openFAQ === id ? null : id);
@@ -113,7 +84,7 @@ const FAQ = () => {
 
           <div className="max-w-4xl mx-auto">
             {categories.map((category) => {
-              const categoryFAQs = filteredFAQs.filter(faq => faq.category === category);
+              const categoryFAQs = filteredFAQs.filter(faq => faq.category_name === category);
               
               if (categoryFAQs.length === 0) return null;
 
@@ -131,7 +102,7 @@ const FAQ = () => {
                           onClick={() => toggleFAQ(faq.id)}
                         >
                           <CardTitle className="text-lg flex justify-between items-center">
-                            {faq.question}
+                            {faq.title}
                             <span className="text-2xl text-gray-400">
                               {openFAQ === faq.id ? '−' : '+'}
                             </span>
@@ -140,7 +111,7 @@ const FAQ = () => {
                         {openFAQ === faq.id && (
                           <CardContent className="pt-0 animate-fade-in">
                             <p className="text-gray-600 leading-relaxed">
-                              {faq.answer}
+                              {faq.content}
                             </p>
                           </CardContent>
                         )}
@@ -162,12 +133,14 @@ const FAQ = () => {
               </CardHeader>
               <CardContent>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-6 py-2 rounded-md font-medium transition-colors">
+                  <button className="bg-gradient-to-r from-[#DF412E] to-[#DF412E] hover:from-[#282F3B] hover:to-[#282F3B] text-white px-6 py-2 rounded-md font-medium transition-colors"
+                   onClick={() => navigate(`/contact`)}
+                  >
                     Contact Support
                   </button>
-                  <button className="border border-gray-300 text-gray-700 hover:bg-gray-50 px-6 py-2 rounded-md font-medium transition-colors">
+                  {/* <button className="border border-gray-300 text-gray-700 hover:bg-gray-50 px-6 py-2 rounded-md font-medium transition-colors">
                     Live Chat
-                  </button>
+                  </button> */}
                 </div>
               </CardContent>
             </Card>

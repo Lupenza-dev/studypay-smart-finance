@@ -133,7 +133,7 @@ const ContactUs = () => {
                       />
                     </div>
 
-                    <Button type="submit" className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
+                    <Button type="submit" className="w-full bg-gradient-to-r from-[#DF412E] to-[#DF412E] hover:from-[#282F3B] hover:to-[#282F3B]">
                       Send Message
                     </Button>
                   </form>
@@ -153,7 +153,7 @@ const ContactUs = () => {
                   </div>
                   <div>
                     <h4 className="font-semibold text-gray-900">Phone</h4>
-                    <p className="text-gray-600">+255 787 971 971E</p>
+                    <p className="text-gray-600">+255 787 971 971</p>
                   </div>
                   <div>
                     <h4 className="font-semibold text-gray-900">Office Hours</h4>

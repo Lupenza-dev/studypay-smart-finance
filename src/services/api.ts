@@ -1124,4 +1124,21 @@ export const websiteService = {
     }
   },
  
+  getFaqs: async () => {
+    try {
+      const response = await axios.get(`${API_WEB_BASE_URL}/faq`, {
+        headers: {
+          'Accept': 'application/json',
+          // 'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw new Error(error.response?.data?.message || 'Failed to fetch Faqs');
+      }
+      throw error;
+    }
+  },
+ 
 };

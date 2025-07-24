@@ -26,7 +26,7 @@ const Footer = () => {
             <ul className="space-y-2">
               <li><a href="#home" className="text-gray-300 hover:text-white transition-colors">Home</a></li>
               <li><a href="#about" className="text-gray-300 hover:text-white transition-colors">About Us</a></li>
-              <li><a href="#services" className="text-gray-300 hover:text-white transition-colors">Services</a></li>
+              <li><a href="#services" className="text-gray-300 hover:text-white transition-colors">Faq</a></li>
               <li><a href="#contact" className="text-gray-300 hover:text-white transition-colors">Contact</a></li>
             </ul>
           </div>
@@ -34,10 +34,10 @@ const Footer = () => {
           <div>
             <h4 className="text-lg font-semibold mb-4">Services</h4>
             <ul className="space-y-2">
-              <li><a href="#" className="text-gray-300 hover:text-white transition-colors">Textbook Financing</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-white transition-colors">Tuition Plans</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-white transition-colors">Equipment Loans</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-white transition-colors">Course Fees</a></li>
+              <li><a href="#" className="text-gray-300 hover:text-white transition-colors">Unigraduate Loan</a></li>
+              <li><a href="#" className="text-gray-300 hover:text-white transition-colors">Intern Loan</a></li>
+              <li><a href="#" className="text-gray-300 hover:text-white transition-colors">Pay Later</a></li>
+              <li><a href="#" className="text-gray-300 hover:text-white transition-colors">UniLoan</a></li>
             </ul>
           </div>
 
